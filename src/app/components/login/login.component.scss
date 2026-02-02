@@ -1,0 +1,116 @@
+.main{
+    // background-image: linear-gradient(to right,white,bisque);
+    background-size: cover;
+    background-position: center;
+    // min-height: 100vh;
+}
+.example-form {
+    width: 100%;
+  }
+.container{
+    width: 75%;
+    margin: auto;
+}
+  .example-full-width {
+    width: 100%;
+  }
+  
+.wave{
+    width: 40px;
+}
+.line{
+    position: relative;
+    &::after{
+        content: "";
+        position: absolute;
+        width: 45%;
+        height: 3px;
+        background-color: var(--second-color);
+        top: 55%;
+        right: 0px;
+        transform: translateY(-50%);
+    }
+    &::before{
+        content: "";
+        position: absolute;
+        width: 45%;
+        height: 3px;
+        background-color: var(--second-color);
+        top: 55%;
+        left: 0px;
+        transform: translateY(-50%);
+    }
+}
+.title{
+    color: var(--second-color);
+    text-align: center;
+}
+button:disabled{
+    border: none !important;
+    color: rgba($color: #fff, $alpha: .5) !important;
+}
+.social{
+    button{
+        border: none;
+        padding: 10px 0;
+        border-radius: 10px;
+        background-color: #E9ECEF;
+        // background-color: var(--main-color);
+        color: var(--second-color);
+        position: relative;
+        transition: all .5s ease;
+        &:hover{
+            background-color: var(--tomato);
+            color: white;
+        }
+        .google-icon{
+            width: 25px;
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+    .fa-google{
+        color: red;
+    }
+    .fa-facebook{
+        color: #1E4AE9;
+    }
+    
+}
+
+.main-forms .forget-form{
+    width: 600px;
+
+}
+.all-forms{
+    background-color: rgba($color: #000000, $alpha: .7);
+}
+.login-icon{
+    width: 30px;
+    margin-left: 10px;
+}
+
+@media screen and (max-width:768px) {
+    .main{
+        padding-top: 80px !important;
+        padding-bottom: 20px ;
+        
+    }
+    .main-forms .forget-form{
+        width: 380px;
+    }
+    .container{
+        width: 95% ;
+        .col-md-4{
+            img{
+            display: none;
+        }
+    }
+    }
+}
+.password-eye{
+    right: 10px;
+    cursor: pointer;
+}

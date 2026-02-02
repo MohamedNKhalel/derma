@@ -1,0 +1,91 @@
+.response-container {
+  border: 1px solid #ccc;
+  padding: 20px;
+  width: 100%;
+  min-width: 400px;
+  max-width: 600px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+}
+
+.response-container {
+  border: 1px solid #ccc;
+  padding: 20px;
+  width: 100%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.response-container h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.response-container ul {
+  padding-left: 20px;
+  margin-bottom: 20px;
+  list-style-type: disc;
+}
+
+.response-container li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.response-container p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.response-container strong {
+  font-weight: bold;
+  color: #000;
+}
+
+.chat-ai {
+  min-width: 400px;
+  z-index: 9;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+.chat-ai .left {
+  position: absolute;
+  top: 15px;
+  right: 0;
+}
+.chat-ai .left span {
+  cursor: pointer;
+}
+.chat-ai .right #card {
+  width: 450px;
+}
+.chat-ai .right #card #cardHeader {
+  text-align: center;
+}
+.chat-ai .right #card #cardHeader h3 {
+  padding-block: 10px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin: 0;
+}
+.chat-ai .right #card #cardHeader i {
+  right: 15px;
+  font-size: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  cursor: pointer;
+}
+.chat-ai .right #card #cardBody {
+  height: 350px;
+  overflow: auto;
+}
+.chat-ai .right #card #cardFooter {
+  padding: 10px;
+}/*# sourceMappingURL=home.component.css.map */

@@ -1,0 +1,55 @@
+.btn-nav {
+  position: relative;
+}
+.btn-nav::after {
+  content: "";
+  position: absolute;
+  background-color: var(--main-color);
+  height: 110%;
+  width: 5px;
+  right: 0;
+}
+.btn-nav a {
+  color: var(--main-color) !important;
+}
+
+.side-nav {
+  height: 88vh;
+  border-top-right-radius: 60px;
+  position: sticky;
+  top: 88px;
+}
+.side-nav aside {
+  position: sticky;
+  top: 0;
+  bottom: 0;
+}
+.side-nav ul li a {
+  font-size: 1.0625rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.side-nav ul li a:hover {
+  color: var(--main-color) !important;
+}
+.side-nav .sign-out-icon {
+  cursor: pointer;
+}
+.side-nav .sideBar-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 15px;
+  font-size: 25px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.side-nav .sideBar-icon:hover {
+  color: var(--tomato);
+}
+
+@media screen and (max-width: 768px) {
+  .side-nav {
+    display: none;
+  }
+}/*# sourceMappingURL=side-nav.component.css.map */

@@ -1,0 +1,249 @@
+<div class="medical-records-container">
+    <!-- Header Section -->
+    <div class="records-header">
+        <div class="header-content">
+        <h2>Medical Records</h2>
+        <p>View and manage patient's medical scans and documents</p>
+        </div>
+        <div class="header-actions">
+        <button type="button" title="delte all" mat-stroked-button 
+                class="delete-all-btn" 
+                (click)="deleteAllRecords()"
+                *ngIf="!loading && records?.length ?? 0"
+                [disabled]="records?.length === 0">
+            <mat-icon>delete_sweep</mat-icon>
+            Delete All
+        </button>
+        <button type="button" title="add record" mat-raised-button color="primary" class="add-record-btn" (click)="openAddRecordDialog()">
+            <mat-icon>add</mat-icon>
+            Add Record
+        </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="loading" @fadeIn>
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading medical records...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!loading && records?.length === 0" @fadeIn>
+        <div class="empty-icon">
+        <mat-icon>folder_open</mat-icon>
+        </div>
+        <h3>No Medical Records</h3>
+        <p>This patient doesn't have any medical records yet.</p>
+        <button mat-raised-button color="primary" (click)="openAddRecordDialog()">
+        <mat-icon>add</mat-icon>
+        Add First Record
+        </button>
+    </div>
+
+    <!-- Records Content -->
+    <div class="records-content" *ngIf="!loading && records?.length ?? 0">
+        <!-- Filter Chips -->
+        <div class="filter-chips">
+        <mat-chip-set aria-label="Record filters">
+            <mat-chip [class.selected]="selectedFilter === 'all'" (click)="selectedFilter = 'all'">
+            All Records ({{ records.length }})
+            </mat-chip>
+            <mat-chip [class.selected]="selectedFilter === 'scan'" (click)="selectedFilter = 'scan'">
+            Scans
+            </mat-chip>
+            <mat-chip [class.selected]="selectedFilter === 'xray'" (click)="selectedFilter = 'xray'">
+            X-Rays
+            </mat-chip>
+        </mat-chip-set>
+        </div>
+
+        <!-- Records Grid -->
+        <div class="records-grid" @fadeIn>
+        <div class="record-card" 
+            *ngFor="let record of filteredRecords; let i = index"
+            @scaleIn>
+            <!-- Record Image -->
+            <div class="record-image-container" (click)="selectImage(i)">
+            <img alt="" [src]="record.image" 
+                [alt]="'Medical record ' + (i + 1)"
+                class="record-image">
+            <div class="record-overlay">
+                <mat-icon class="zoom-icon">zoom_in</mat-icon>
+                <span>View Full Size</span>
+            </div>
+            <div class="record-number">{{ i + 1 }}</div>
+            </div>
+
+            <!-- Record Info -->
+            <div class="record-info">
+            <div class="record-header">
+                <div class="record-title">
+                <mat-chip class="record-type">{{ getRecordType(record) }}</mat-chip>
+                <h4 class="prediction-text">{{ record.prediction }}</h4>
+                </div>
+                
+                <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-btn">
+                <mat-icon>more_vert</mat-icon>
+                </button>
+                
+                <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="selectImage(i)">
+                    <mat-icon>visibility</mat-icon>
+                    <span>View</span>
+                </button>
+                <button mat-menu-item (click)="downloadRecord(record, i)">
+                    <mat-icon>download</mat-icon>
+                    <span>Download</span>
+                </button>
+                <button mat-menu-item (click)="deleteRecord(i, $event)" class="delete-menu-item">
+                    <mat-icon>delete</mat-icon>
+                    <span>Delete</span>
+                </button>
+                </mat-menu>
+            </div>
+
+            <div class="record-details">
+                <div class="detail-item" *ngIf="record.name">
+                <mat-icon>insert_drive_file</mat-icon>
+                <div class="detail-content">
+                    <span class="detail-label">File Name</span>
+                    <span class="detail-value">{{ record.name }}</span>
+                </div>
+                </div>
+
+                <div class="detail-item">
+                <mat-icon>event</mat-icon>
+                <div class="detail-content">
+                    <span class="detail-label">Date & Time</span>
+                    <span class="detail-value">{{ formatDate(date[i]) }}</span>
+                </div>
+                </div>
+
+                <div class="detail-item" *ngIf="record.treatment">
+                <mat-icon>medical_services</mat-icon>
+                <div class="detail-content">
+                    <span class="detail-label">Treatment Notes</span>
+                    <span class="detail-value">{{ record.treatment }}</span>
+                </div>
+                </div>
+
+                <div class="detail-item" *ngIf="record.size">
+                <mat-icon>data_usage</mat-icon>
+                <div class="detail-content">
+                    <span class="detail-label">File Size</span>
+                    <span class="detail-value">{{ (record.size / 1024 / 1024).toFixed(2) }} MB</span>
+                </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="record-actions">
+                <button mat-stroked-button class="action-btn" (click)="selectImage(i)">
+                <mat-icon>visibility</mat-icon>
+                Preview
+                </button>
+                <button mat-stroked-button class="action-btn" (click)="downloadRecord(record, i)">
+                <mat-icon>download</mat-icon>
+                Download
+                </button>
+                <button mat-icon-button 
+                        class="delete-btn" 
+                        (click)="deleteRecord(i, $event)"
+                        matTooltip="Delete record">
+                <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Records Statistics -->
+        <div class="records-stats">
+        <div class="stat-item">
+            <mat-icon>folder</mat-icon>
+            <div class="stat-content">
+            <span class="stat-value">{{ records.length }}</span>
+            <span class="stat-label">Total Records</span>
+            </div>
+        </div>
+        <div class="stat-item">
+            <mat-icon>update</mat-icon>
+            <div class="stat-content">
+            <span class="stat-value">{{ formatDate(date[date.length - 1]) }}</span>
+            <span class="stat-label">Last Updated</span>
+            </div>
+        </div>
+        <div class="stat-item">
+            <mat-icon>storage</mat-icon>
+            <div class="stat-content">
+            <span class="stat-value">{{ calculateTotalSize() }}</span>
+            <span class="stat-label">Total Storage</span>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div class="preview-modal" *ngIf="previewFlag" (click)="closePreview()" @fadeIn>
+    <div class="preview-container" (click)="stop($event)">
+        <!-- Close Button -->
+        <button mat-icon-button class="close-preview" (click)="closePreview()">
+        <mat-icon>close</mat-icon>
+        </button>
+
+        <!-- Navigation Buttons -->
+        <button mat-icon-button class="nav-btn prev" (click)="moveLeft()" *ngIf="records.length > 1">
+        <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button mat-icon-button class="nav-btn next" (click)="moveRight()" *ngIf="records.length > 1">
+        <mat-icon>chevron_right</mat-icon>
+        </button>
+
+        <!-- Image -->
+        <div class="preview-image-container">
+        <img [src]="imageUrl" alt="Medical record preview" class="preview-image">
+        </div>
+
+        <!-- Image Info -->
+        <div class="preview-info">
+        <div class="info-left">
+            <mat-chip class="record-type">{{ getRecordType(records[imageIndex]) }}</mat-chip>
+            <div class="info-details">
+            <span class="prediction-label">Diagnosis:</span>
+            <span class="prediction-value">{{ records[imageIndex].prediction }}</span>
+            </div>
+            <span class="record-date">{{ formatDate(date[imageIndex]) }}</span>
+        </div>
+        <div class="info-right">
+            <span class="image-counter">{{ imageIndex + 1 }} / {{ records.length }}</span>
+            <button mat-icon-button (click)="downloadRecord(records[imageIndex], imageIndex)" matTooltip="Download">
+            <mat-icon>download</mat-icon>
+            </button>
+            <button mat-icon-button (click)="deleteRecord(imageIndex, $event)" matTooltip="Delete" class="delete-preview-btn">
+            <mat-icon>delete</mat-icon>
+            </button>
+        </div>
+        </div>
+
+        <!-- Treatment Notes in Preview -->
+        <div class="preview-treatment" *ngIf="records[imageIndex].treatment">
+        <div class="treatment-header">
+            <mat-icon>medical_services</mat-icon>
+            <span>Treatment Notes</span>
+        </div>
+        <p class="treatment-text">{{ records[imageIndex].treatment }}</p>
+        </div>
+
+        <!-- Thumbnails -->
+        <div class="preview-thumbnails" *ngIf="records.length > 1">
+        <div class="thumbnail" 
+            *ngFor="let record of records; let i = index"
+            [class.active]="i === imageIndex"
+            (click)="selectImage(i); stop($event)">
+            <img [src]="record.image" [alt]="'Thumbnail ' + (i + 1)">
+            <span class="thumbnail-number">{{ i + 1 }}</span>
+        </div>
+        </div>
+    </div>
+</div>

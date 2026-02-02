@@ -1,0 +1,64 @@
+.main {
+  padding-top: 110px;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url(../../../assets/images/42b18b7b7d271c5bc9091b3265abc16a.jpg);
+  background-size: cover;
+  background-position: center;
+}
+
+.example-form {
+  width: 100%;
+}
+
+.example-full-width {
+  width: 100%;
+}
+
+.wave {
+  width: 40px;
+}
+
+.line {
+  position: relative;
+}
+.line::after {
+  content: "";
+  position: absolute;
+  width: 45%;
+  height: 3px;
+  background-color: var(--bg-color);
+  top: 55%;
+  right: 0px;
+  transform: translateY(-50%);
+}
+.line::before {
+  content: "";
+  position: absolute;
+  width: 45%;
+  height: 3px;
+  background-color: var(--bg-color);
+  top: 55%;
+  left: 0px;
+  transform: translateY(-50%);
+}
+
+.social button {
+  border: none;
+  padding: 15px 0;
+  border-radius: 10px;
+  background-color: #f1f1f1;
+  transition: all 0.5s ease;
+}
+.social button img {
+  width: 30px;
+  margin-left: 10px;
+}
+.social button:hover {
+  background-color: var(--main-color);
+  color: white;
+}
+.social .fa-google {
+  color: red;
+}
+.social .fa-facebook {
+  color: #1E4AE9;
+}/*# sourceMappingURL=register.component.css.map */

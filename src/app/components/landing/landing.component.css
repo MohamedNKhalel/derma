@@ -1,0 +1,395 @@
+.logo {
+  color: var(--main-color);
+  text-decoration: none;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.navbar {
+  background-color: rgba(255, 255, 255, 0.3);
+  padding-block: 30px;
+  transition: all 0.5s ease;
+}
+
+.main {
+  min-height: 100vh;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), url(../../../assets/images/ave-calvar-5u4L-E4eQWw-unsplash.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding-top: 110px;
+  font-size: 16px;
+}
+
+.text {
+  display: none;
+}
+
+.tagline span {
+  color: var(--main-color);
+  font-weight: 500;
+  font-size: 16px;
+}
+.tagline h1 {
+  font-size: 4em;
+  line-height: 1.1;
+  color: black;
+  font-weight: 700;
+  width: 40%;
+}
+.tagline p {
+  color: rgba(0, 0, 0, 0.5);
+  width: 40%;
+  line-height: 2;
+  font-size: 1.0625rem;
+}
+
+@media screen and (max-width: 768px) {
+  .tagline h1, .tagline p {
+    width: 100%;
+  }
+}
+.about .about-content {
+  display: none;
+}
+.about .about-text h2 {
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: black;
+}
+.about .about-text h2 .my-logo {
+  color: var(--main-color);
+}
+.about .about-text p {
+  font-size: 17px;
+  line-height: 2;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.services {
+  background-color: #F8F9FA;
+}
+.services h2 {
+  font-size: 2.75rem;
+  color: black;
+  font-weight: 700;
+}
+.services .my-card {
+  display: none;
+}
+.services .my-card .icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.services .my-card i {
+  font-size: 45px;
+  color: var(--tomato);
+  border-radius: 50%;
+  width: 85px;
+  height: 85px;
+  padding: 20px 16px;
+  background-color: #FFEEED;
+  align-self: flex-start;
+}
+.services .my-card .my-card-text h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #000000;
+}
+.services .my-card .my-card-text p {
+  color: rgba(0, 0, 0, 0.5);
+  line-height: 2;
+  font-weight: 400;
+}
+.services .consult {
+  padding-block: 100px;
+}
+.services .consult h3 {
+  font-weight: 600;
+  color: var(--main-color);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+.services .consult .consult-input {
+  position: relative;
+}
+.services .consult .consult-input input::-moz-placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+.services .consult .consult-input input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+.services .consult .consult-input i {
+  color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 50%;
+  right: 30px;
+  transform: translateY(-50%);
+}
+.services .consult .consult-input select {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.hero {
+  height: 500px;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../../../assets/images/bg_2.jpg);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+.hero h2 {
+  font-size: 3.125rem;
+  font-weight: 800;
+}
+.hero p {
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@media screen and (max-width: 768px) {
+  .main {
+    font-size: 14px;
+  }
+}
+.team {
+  padding-block: 50px;
+}
+.team .team-container {
+  width: 90%;
+  margin: auto;
+}
+.team .title {
+  text-align: center;
+}
+.team .title h2 {
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: #191919;
+}
+.team .title p {
+  font-size: 1.0625rem;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  width: 75%;
+  margin: auto;
+  margin-top: 40px;
+  line-height: 2;
+}
+.team .team-card:hover .team-card-layer {
+  top: 0 !important;
+}
+.team .team-card:hover .team-card-body h3 {
+  color: RGB(32, 125, 255) !important;
+}
+.team .team-card .team-card-header {
+  overflow: hidden;
+}
+.team .team-card .team-card-header .team-card-layer {
+  position: absolute;
+  top: 120%;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: all 0.6s ease;
+}
+.team .team-card .team-card-header .team-card-layer .team-icons {
+  color: var(--tomato);
+}
+.team .team-card .team-card-header .team-card-layer .team-icons i {
+  background-color: rgba(165, 42, 42, 0.207);
+  box-shadow: inset 0px 0px 1px 1px tomato;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 20px 11px;
+  transition: all 0.3s ease;
+}
+.team .team-card .team-card-header .team-card-layer .team-icons i:hover {
+  background-color: var(--tomato);
+  color: rgb(230, 220, 220);
+}
+.team .team-card .team-card-body {
+  text-align: center;
+}
+.team .team-card .team-card-body h3 {
+  font-size: 1.5rem;
+  color: #000000;
+  font-weight: 500;
+}
+.team .team-card .team-card-body span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 5px;
+  color: RGB(32, 125, 255);
+}
+.team .team-card .team-card-body p {
+  font-size: 1.0625rem;
+  color: rgba(0, 0, 0, 0.5);
+  line-height: 2;
+}
+.team .team-card .team-card-footer button {
+  background-color: var(--main-color);
+  border-radius: 25px;
+  padding: 10px 15px;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.4s ease;
+}
+.team .team-card .team-card-footer button:hover {
+  background-color: var(--tomato);
+}
+
+.testimonial {
+  padding-block: 100px;
+  background-image: linear-gradient(rgba(32, 125, 255, 0.5647058824), rgba(32, 125, 255, 0.5647058824)), url(../../../assets/images/bg_3.jpg);
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.testimonial .title {
+  text-align: center;
+}
+.testimonial .title span {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 2;
+  color: rgba(255, 255, 255, 0.9);
+}
+.testimonial .title h2 {
+  font-size: 44px;
+  font-weight: 700;
+  color: white;
+}
+.testimonial .carousel-item .testimonial-person {
+  position: relative;
+}
+.testimonial .carousel-item .testimonial-person img {
+  width: 150px;
+  border-radius: 50%;
+}
+.testimonial .carousel-item .testimonial-person .test-icon {
+  background-color: var(--tomato);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  position: absolute;
+  top: 115px;
+  left: 52%;
+}
+.testimonial .carousel-item .testimonial-person .test-icon i {
+  font-size: 20px;
+  color: white;
+}
+.testimonial .carousel-item .test-text .opinion p {
+  font-size: 1.0625rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+  line-height: 2;
+  padding-block: 20px;
+  width: 500px;
+  margin: auto;
+}
+.testimonial .carousel-item .test-text .patient-name {
+  padding-block: 20px;
+}
+.testimonial .carousel-item .test-text .patient-name p {
+  font-size: 1.0625rem;
+  color: white;
+  font-weight: 400;
+}
+.testimonial .carousel-item .test-text .patient-name span {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+  font-size: 1.0625rem;
+}
+.testimonial .carousel-indicators {
+  top: 100% !important;
+}
+.testimonial .carousel-indicators [data-bs-target] {
+  background-color: white !important;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+}
+
+.contact {
+  padding-block: 50px;
+}
+.contact .title {
+  text-align: center;
+}
+.contact .title h2 {
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: #191919;
+}
+.contact .title p {
+  font-size: 1.0625rem;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  width: 75%;
+  margin: auto;
+  margin-top: 40px;
+  line-height: 2;
+}
+.contact .contact-card {
+  background-color: #F8F9FA;
+  height: 320px;
+}
+.contact .contact-card .contact-card-header .contact-icon {
+  background-color: #FFFFFF;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  margin: auto;
+  padding: 20px;
+  transition: all 0.4s ease;
+}
+.contact .contact-card .contact-card-header .contact-icon:hover {
+  background-color: var(--main-color);
+}
+.contact .contact-card .contact-card-header .contact-icon:hover i {
+  color: white;
+}
+.contact .contact-card .contact-card-header .contact-icon i {
+  color: var(--main-color);
+  font-size: 30px;
+  transition: all 0.4s ease;
+}
+.contact .contact-card .contact-card-body h3 {
+  font-size: 1.0625rem;
+  color: RGBA(0, 0, 0, 0.9);
+  font-weight: 500;
+}
+.contact .contact-card .contact-card-body p {
+  font-size: 1.0625rem;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 400;
+  line-height: 2;
+}
+.contact .form-row {
+  background-color: #F1F3F4;
+  margin: 0;
+  padding: 0;
+}
+.contact .form-row .contact-form textarea {
+  height: 200px !important;
+  resize: none;
+}/*# sourceMappingURL=landing.component.css.map */

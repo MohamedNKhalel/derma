@@ -1,0 +1,143 @@
+<div class="add-record-dialog">
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="header-icon">
+      <mat-icon>add_photo_alternate</mat-icon>
+    </div>
+    <div class="header-content">
+      <h2>Upload Medical Record</h2>
+      <p>Add a new scan or medical image to patient's records</p>
+    </div>
+    <button mat-icon-button class="close-button" (click)="closeDialog()" [disabled]="isUploading">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="dialog-content">
+    <form [formGroup]="sendImageForm">
+      <!-- File Upload Zone -->
+      <div class="upload-section">
+        <ngx-dropzone 
+          (change)="onSelect($event)" 
+          [multiple]="false"
+          [accept]="'image/*'"
+          class="dropzone"
+          [class.has-file]="files.length > 0">
+          
+          <ngx-dropzone-label>
+            <div class="dropzone-content">
+              <mat-icon class="upload-icon">cloud_upload</mat-icon>
+              <h3>Drop your medical image here</h3>
+              <p>or click to browse from your device</p>
+              <span class="file-types">Supports: JPG, PNG, JPEG</span>
+            </div>
+          </ngx-dropzone-label>
+
+          <ngx-dropzone-preview 
+            *ngFor="let f of files" 
+            [removable]="!isUploading" 
+            (removed)="onRemove(f)"
+            class="file-preview">
+            <ngx-dropzone-label>
+              <div class="preview-info">
+                <mat-icon>insert_drive_file</mat-icon>
+                <span>{{ f.name }}</span>
+                <small>{{ (f.size / 1024 / 1024).toFixed(2) }} MB</small>
+              </div>
+            </ngx-dropzone-label>
+          </ngx-dropzone-preview>
+        </ngx-dropzone>
+
+        <!-- Image Preview -->
+        <div class="image-preview" *ngIf="previewUrl">
+          <div class="preview-header">
+            <h4>Preview</h4>
+          </div>
+          <div class="preview-image-container">
+            <img [src]="previewUrl" alt="Preview" class="preview-image">
+          </div>
+        </div>
+      </div>
+
+      <!-- Treatment Notes -->
+      <div class="notes-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Treatment Notes (Optional)</mat-label>
+          <textarea 
+            matInput 
+            formControlName="treatment"
+            rows="4"
+            placeholder="Add any relevant treatment notes or observations..."
+            [disabled]="isUploading"></textarea>
+          <mat-icon matPrefix>note_add</mat-icon>
+          <mat-hint align="end">{{ sendImageForm.get('treatment')?.value?.length || 0 }}/500</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <!-- Upload Progress -->
+      <div class="upload-progress" *ngIf="isUploading">
+        <div class="progress-header">
+          <span class="progress-label">
+            <mat-icon class="spinning">sync</mat-icon>
+            {{ loadingFlag ? 'Analyzing and uploading...' : 'Processing...' }}
+          </span>
+          <span class="progress-percentage">{{ uploadProgress }}%</span>
+        </div>
+        <mat-progress-bar 
+          mode="determinate" 
+          [value]="uploadProgress"
+          class="progress-bar">
+        </mat-progress-bar>
+        <div class="progress-steps">
+          <div class="step" [class.active]="uploadProgress > 0">
+            <mat-icon>{{uploadProgress > 30 ? 'check_circle' : 'radio_button_unchecked'}}</mat-icon>
+            <span>Analyzing image</span>
+          </div>
+          <div class="step" [class.active]="uploadProgress > 30">
+            <mat-icon>{{uploadProgress > 60 ? 'check_circle' : 'radio_button_unchecked'}}</mat-icon>
+            <span>Uploading file</span>
+          </div>
+          <div class="step" [class.active]="uploadProgress > 90">
+            <mat-icon>{{uploadProgress === 100 ? 'check_circle' : 'radio_button_unchecked'}}</mat-icon>
+            <span>Saving record</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prediction Result -->
+      <div class="prediction-result" *ngIf="prediction && !isUploading">
+        <div class="result-card">
+          <mat-icon class="result-icon">biotech</mat-icon>
+          <div class="result-content">
+            <span class="result-label">AI Diagnosis</span>
+            <span class="result-value">{{ prediction }}</span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Actions -->
+  <div class="dialog-actions">
+    <button 
+      mat-stroked-button 
+      type="button" 
+      (click)="closeDialog()"
+      [disabled]="isUploading"
+      class="cancel-btn">
+      Cancel
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary"
+      type="button"
+      (click)="sendImage()"
+      [disabled]="sendImageForm.invalid || isUploading || files.length === 0"
+      class="upload-btn">
+      <mat-icon *ngIf="!isUploading">cloud_upload</mat-icon>
+      <mat-spinner *ngIf="isUploading" diameter="20"></mat-spinner>
+      <span>{{ isUploading ? 'Uploading...' : 'Upload Record' }}</span>
+    </button>
+  </div>
+</div>

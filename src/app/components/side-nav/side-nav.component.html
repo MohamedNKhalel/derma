@@ -1,0 +1,104 @@
+<aside 
+  #sideNav 
+  class="side-nav" 
+  [@expandCollapse]="isExpanded ? 'expanded' : 'collapsed'">
+  
+  <div class="side-nav-content">
+    
+    <!-- Logo Section -->
+    <div class="nav-header">
+      <div class="nav-logo">
+        <div *ngIf="isExpanded" class="logo-icon">
+          <i  class="fa-solid fa-heart-pulse"></i>
+        </div>
+        <span *ngIf="isExpanded" class="logo-text" [@fadeInOut]>DERMAI</span>
+      </div>
+      <button title="toggle" class="toggle-btn" (click)="toggleSidebar()" [title]="isExpanded ? 'Collapse' : 'Expand'">
+        <i class="fa-solid" [ngClass]="isExpanded ? 'fa-angles-left' : 'fa-angles-right'"></i>
+      </button>
+    </div>
+
+    <!-- User Profile Section -->
+    <div class="user-profile" routerLink="/profile">
+      <div class="user-avatar">
+        <img *ngIf="user?.photoURL" [src]="user.photoURL" alt="User">
+        <div *ngIf="!user?.photoURL" class="avatar-placeholder">
+          {{ getInitials(user?.displayName) }}
+        </div>
+        <div class="status-indicator"></div>
+      </div>
+      <div *ngIf="isExpanded" class="user-details" [@fadeInOut]>
+        <h4 class="user-name">{{ user?.displayName || 'User' }}</h4>
+        <p class="user-role">Doctor</p>
+      </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="nav-links">
+      <div class="nav-section">
+        <h5 *ngIf="isExpanded" class="section-title" [@fadeInOut]>
+          <i class="fa-solid fa-grip"></i>
+          Main Menu
+        </h5>
+        <a  (click)="changeStatus()"
+          *ngFor="let item of navItems"
+          [routerLink]="item.route" 
+          routerLinkActive="active"
+          class="nav-item"
+          [title]="!isExpanded ? item.label : ''">
+          <div class="nav-item-icon">
+            <i class="fa-solid" [ngClass]="item.icon"></i>
+            <span *ngIf="item.badge && !isExpanded" class="badge-dot"></span>
+          </div>
+          <span *ngIf="isExpanded" class="nav-item-label" [@fadeInOut]>
+            {{ item.label }}
+          </span>
+          <span *ngIf="item.badge && isExpanded" class="nav-badge" [@fadeInOut]>
+            {{ item.badge }}
+          </span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <h5 *ngIf="isExpanded" class="section-title" [@fadeInOut]>
+          <i class="fa-solid fa-sliders"></i>
+          Quick Actions
+        </h5>
+        <a 
+          *ngFor="let item of quickActions"
+          [routerLink]="item.route" 
+          routerLinkActive="active"
+          class="nav-item"
+          [title]="!isExpanded ? item.label : ''">
+          <div class="nav-item-icon">
+            <i class="fa-solid" [ngClass]="item.icon"></i>
+          </div>
+          <span *ngIf="isExpanded" class="nav-item-label" [@fadeInOut]>
+            {{ item.label }}
+          </span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Bottom Actions -->
+    <div class="nav-footer">
+      <!-- Theme Toggle -->
+      <button 
+        class="footer-btn" 
+        (click)="toggleDarkMode()" 
+        [title]="!isExpanded ? (isDarkMode ? 'Light Mode' : 'Dark Mode') : ''">
+        <i class="fa-solid" [ngClass]="isDarkMode ? 'fa-sun' : 'fa-moon'"></i>
+        <span *ngIf="isExpanded" [@fadeInOut]>
+          {{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}
+        </span>
+      </button>
+
+      <!-- Sign Out -->
+      <button class="footer-btn danger" (click)="logOut()" [title]="!isExpanded ? 'Sign Out' : ''">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span *ngIf="isExpanded" [@fadeInOut]>Sign Out</span>
+      </button>
+    </div>
+
+  </div>
+</aside>

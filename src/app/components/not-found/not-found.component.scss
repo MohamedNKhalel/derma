@@ -1,0 +1,16 @@
+.main{
+    width: 35%;
+    button{
+        background-color: var(--tomato);
+        transition: all .5s ease;
+        &:hover{
+            background-color: #DEF7E5;
+            color: black !important;
+        }
+    }
+}
+@media screen and (max-width:768px) {
+    .main{
+        width: 80%;
+    }
+}

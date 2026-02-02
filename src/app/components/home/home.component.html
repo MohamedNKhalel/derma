@@ -1,0 +1,297 @@
+<div class="home-container">
+  <!-- Page Header -->
+  <div class="page-header" @fadeIn>
+    <div class="header-content">
+      <h1 class="page-title">AI Medical Scan Analysis</h1>
+      <p class="page-subtitle">Upload and analyze medical images with advanced AI diagnosis</p>
+    </div>
+    <div class="model-status" (click)="changeStatus()">
+      <mat-icon [class.active]="status">{{ status ? 'model_training' : 'cloud_off' }}</mat-icon>
+      <span>{{ status ? 'AI Active' : 'AI Inactive' }}</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="scan-content">
+    <!-- Upload Section -->
+    <div class="upload-section" @slideIn>
+      <form [formGroup]="sendImageForm" (ngSubmit)="sendImage()">
+        <!-- Patient Selection Card -->
+        <div class="selection-card">
+          <div class="card-header">
+            <mat-icon>person</mat-icon>
+            <h3>Select Patient</h3>
+          </div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Choose a patient</mat-label>
+            <mat-select formControlName="id" placeholder="Select patient">
+              <mat-option *ngFor="let patient of patients" [value]="patient.id">
+                <div class="patient-option">
+                  <span class="patient-name">{{ patient.name }}</span>
+                  <span class="patient-meta">{{ patient.gender }} • {{ patient.phone }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>search</mat-icon>
+            <mat-error *ngIf="sendImageForm.get('id')?.hasError('required')">
+              Please select a patient
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Selected Patient Info -->
+          <div class="selected-patient" *ngIf="sendImageForm.get('id')?.value && getSelectedPatient()" @scaleIn>
+            <div class="patient-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <div class="patient-info">
+              <h4>{{ getSelectedPatient()?.name }}</h4>
+              <p>{{ getSelectedPatient()?.email || 'No email' }}</p>
+            </div>
+            <mat-chip class="status-chip">Selected</mat-chip>
+          </div>
+        </div>
+
+        <!-- File Upload Card -->
+        <div class="upload-card">
+          <div class="card-header">
+            <mat-icon>cloud_upload</mat-icon>
+            <h3>Upload Medical Image</h3>
+          </div>
+
+          <ngx-dropzone 
+            (change)="onSelect($event)" 
+            [multiple]="false"
+            [accept]="'image/*'"
+            class="dropzone"
+            [class.has-file]="files.length > 0">
+            
+            <ngx-dropzone-label>
+              <div class="dropzone-content">
+                <mat-icon class="upload-icon">add_photo_alternate</mat-icon>
+                <h4>Drop medical image here</h4>
+                <p>or click to browse from your device</p>
+                <span class="file-types">Supports: JPG, PNG, JPEG</span>
+              </div>
+            </ngx-dropzone-label>
+
+            <ngx-dropzone-preview 
+              *ngFor="let f of files" 
+              [removable]="!loadingFlag && !uploaded" 
+              (removed)="onRemove(f)"
+              class="file-preview">
+              <ngx-dropzone-label>
+                <div class="preview-info">
+                  <mat-icon>insert_drive_file</mat-icon>
+                  <div class="file-details">
+                    <span class="file-name">{{ f.name }}</span>
+                    <small class="file-size">{{ (f.size / 1024 / 1024).toFixed(2) }} MB</small>
+                  </div>
+                </div>
+              </ngx-dropzone-label>
+            </ngx-dropzone-preview>
+          </ngx-dropzone>
+
+          <!-- Image Preview -->
+          <div class="image-preview-container" *ngIf="previewUrl" @scaleIn>
+            <div class="preview-header">
+              <mat-icon>visibility</mat-icon>
+              <span>Image Preview</span>
+            </div>
+            <div class="preview-image">
+              <img [src]="previewUrl" alt="Preview">
+            </div>
+          </div>
+
+          <!-- Analyze Button -->
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit"
+            class="analyze-btn"
+            [disabled]="sendImageForm.invalid || loadingFlag">
+            <mat-icon *ngIf="!loadingFlag">biotech</mat-icon>
+            <mat-spinner *ngIf="loadingFlag" diameter="20"></mat-spinner>
+            <span>{{ loadingFlag ? 'Analyzing Image...' : 'Analyze Now' }}</span>
+          </button>
+        </div>
+
+        <!-- Analysis Results -->
+        <div class="results-section" *ngIf="prediction" @fadeIn>
+          <!-- Prediction Card -->
+          <div class="prediction-card">
+            <div class="prediction-header">
+              <mat-icon class="result-icon">verified</mat-icon>
+              <h3>AI Diagnosis Result</h3>
+            </div>
+
+            <div class="prediction-content">
+              <div class="diagnosis-badge">
+                <span class="badge-label">Detected Condition</span>
+                <h2 class="diagnosis-text">{{ prediction }}</h2>
+              </div>
+
+              <!-- Save Section -->
+              <div class="save-section" *ngIf="!saved">
+                <p class="save-message">Save this scan to patient's medical records</p>
+                <button 
+                  mat-raised-button 
+                  color="accent"
+                  type="button"
+                  (click)="saveScan()"
+                  [disabled]="uploaded"
+                  class="save-btn">
+                  <mat-icon *ngIf="!uploaded">save</mat-icon>
+                  <mat-spinner *ngIf="uploaded" diameter="20"></mat-spinner>
+                  <span>{{ uploaded ? 'Saving...' : 'Save Scan' }}</span>
+                </button>
+
+                <!-- Upload Progress -->
+                <div class="upload-progress" *ngIf="uploaded">
+                  <div class="progress-header">
+                    <span>{{ getProgressMessage() }}</span>
+                    <span class="progress-value">{{ percentage }}%</span>
+                  </div>
+                  <mat-progress-bar 
+                    mode="determinate" 
+                    [value]="percentage"
+                    color="accent">
+                  </mat-progress-bar>
+                </div>
+              </div>
+
+              <!-- Success Section -->
+              <div class="success-section" *ngIf="saved" @scaleIn>
+                <div class="success-icon">
+                  <mat-icon>check_circle</mat-icon>
+                </div>
+                <h4>Scan Saved Successfully!</h4>
+                <p>All data has been saved to patient's medical history</p>
+                
+                <div class="action-buttons">
+                  <button 
+                    mat-stroked-button 
+                    type="button"
+                    (click)="showDetails()"
+                    class="details-btn">
+                    <mat-icon>{{ detailsClicked ? 'visibility_off' : 'info' }}</mat-icon>
+                    <span>{{ detailsClicked ? 'Hide Details' : 'View Details' }}</span>
+                  </button>
+                  <button 
+                    mat-raised-button 
+                    color="primary"
+                    type="button"
+                    (click)="startNewScan()"
+                    class="new-scan-btn">
+                    <mat-icon>add</mat-icon>
+                    <span>New Scan</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Disease Details Card -->
+          <div class="details-card" *ngIf="detailsClicked && !isLoading" @fadeIn>
+            <div class="details-header">
+              <mat-icon>medical_information</mat-icon>
+              <h3>Medical Information</h3>
+            </div>
+
+            <div class="details-content">
+              <div class="details-grid">
+                <!-- Left Column - Information -->
+                <div class="info-column">
+                  <div class="info-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Disease Name</mat-label>
+                      <input matInput [value]="diseaseName" readonly>
+                      <mat-icon matPrefix>coronavirus</mat-icon>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="info-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Description</mat-label>
+                      <textarea 
+                        matInput 
+                        [value]="description" 
+                        readonly
+                        rows="4"></textarea>
+                      <mat-icon matPrefix>description</mat-icon>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="info-field">
+                    <label class="field-label">
+                      <mat-icon>emergency</mat-icon>
+                      Symptoms
+                    </label>
+                    <div class="symptoms-list">
+                      <mat-chip *ngFor="let symptom of symptoms" class="symptom-chip">
+                        {{ symptom }}
+                      </mat-chip>
+                    </div>
+                  </div>
+
+                  <div class="info-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Treatment</mat-label>
+                      <textarea 
+                        matInput 
+                        [value]="treatment" 
+                        readonly
+                        rows="3"></textarea>
+                      <mat-icon matPrefix>medication</mat-icon>
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <!-- Right Column - Image -->
+                <div class="image-column">
+                  <div class="reference-image">
+                    <div class="image-header">
+                      <mat-icon>image</mat-icon>
+                      <span>Reference Image</span>
+                    </div>
+                    <div class="image-container" *ngIf="skinDiseasePhotoUrl">
+                      <img [src]="skinDiseasePhotoUrl" alt="Disease reference">
+                    </div>
+                    <div class="image-placeholder" *ngIf="!skinDiseasePhotoUrl">
+                      <mat-icon>image_not_supported</mat-icon>
+                      <span>No reference image available</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading Details -->
+          <div class="loading-details" *ngIf="detailsClicked && isLoading" @fadeIn>
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Loading medical information...</p>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="info-cards" @slideIn>
+      <div class="info-card">
+        <mat-icon>speed</mat-icon>
+        <h4>Fast Analysis</h4>
+        <p>Get AI-powered diagnosis results in seconds</p>
+      </div>
+      <div class="info-card">
+        <mat-icon>verified_user</mat-icon>
+        <h4>Secure Storage</h4>
+        <p>All medical data is encrypted and safely stored</p>
+      </div>
+      <div class="info-card">
+        <mat-icon>history</mat-icon>
+        <h4>Complete History</h4>
+        <p>Track patient progress over time with detailed records</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,578 @@
+<!-- Hidden file input for image upload -->
+<input
+  type="file"
+  id="fileInput"
+  accept="image/*"
+  (change)="onUploadImage($event)"
+  style="display: none;"
+  aria-label="Upload skin image for AI analysis"
+/>
+
+<!-- Navigation Header -->
+<header class="navbar" [class.scrolled]="isScrolled">
+  <div class="container">
+    <div class="navbar-content">
+      <div class="logo">
+        <i class="fas fa-heartbeat"></i>
+        <span>DermAI</span>
+      </div>
+      <nav class="nav-menu">
+        <a (click)="scrollToSection('hero')" class="nav-link">Home</a>
+        <a (click)="scrollToSection('about')" class="nav-link">About</a>
+        <a (click)="scrollToSection('services')" class="nav-link">Services</a>
+        <a (click)="scrollToSection('team')" class="nav-link">Team</a>
+        <a (click)="scrollToSection('testimonials')" class="nav-link">Reviews</a>
+        <a (click)="scrollToSection('contact')" class="nav-link">Contact</a>
+      </nav>
+      <button type="button" title="Upload skin image for AI analysis" class="btn-upload" (click)="triggerFileUpload()">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        <span>Join Us</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Hero Section -->
+<section id="hero" class="hero-section">
+  <div class="hero-background">
+    <div class="hero-particle"></div>
+    <div class="hero-particle"></div>
+    <div class="hero-particle"></div>
+  </div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-text" data-aos="fade-right">
+        <div class="hero-badge">
+          <i class="fas fa-certificate"></i>
+          <span>FDA Approved Technology</span>
+        </div>
+        <h1 class="hero-title">
+          AI-Powered Skin
+          <span class="gradient-text">Disease Detection</span>
+        </h1>
+        <p class="hero-subtitle">
+          Revolutionary artificial intelligence technology that detects Cowpox, Monkeypox, HFMD, 
+          Measles, and Chickenpox with 98% accuracy in under 10 seconds.
+        </p>
+        <div class="hero-buttons">
+          <button class="btn btn-primary" (click)="triggerFileUpload()">
+            <i class="fas fa-upload"></i>
+            Start Diagnosis
+          </button>
+          <button class="btn btn-outline" (click)="scrollToSection('about')">
+            <i class="fas fa-play-circle"></i>
+            Learn More
+          </button>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="hero-stats">
+          <div class="stat" *ngFor="let stat of stats">
+            <div class="stat-icon">
+              <i class="fas" [ngClass]="stat.icon"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">
+                {{ stat.current | number:'1.0-0' }}{{ stat.suffix }}
+              </div>
+              <div class="stat-label">{{ stat.label }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-aos="fade-left">
+        <div class="visual-card">
+          <div class="scan-animation">
+            <i class="fas fa-microscope"></i>
+            <div class="scan-line"></div>
+          </div>
+          <div class="visual-overlay">
+            <div class="overlay-item">
+              <i class="fas fa-check-circle"></i>
+              <span>98% Accuracy</span>
+            </div>
+            <div class="overlay-item">
+              <i class="fas fa-clock"></i>
+              <span>10s Analysis</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="about-section">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-badge">
+        <i class="fas fa-info-circle"></i>
+        About Platform
+      </span>
+      <h2 class="section-title">{{ aboutContent.title }}</h2>
+      <p class="section-subtitle">{{ aboutContent.subtitle }}</p>
+    </div>
+
+    <div class="about-content">
+      <div class="about-image" data-aos="fade-right">
+        <div class="image-wrapper">
+          <img src="data:image/svg+xml,%3Csvg width='500' height='500' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='500' height='500' fill='%232c3e50'/%3E%3Ctext x='50%25' y='50%25' font-size='80' text-anchor='middle' dy='.3em' fill='%23ecf0f1' font-family='Arial'%3E%F0%9F%94%AC%3C/text%3E%3C/svg%3E" 
+               alt="AI Technology Illustration">
+          <div class="image-badge">
+            <i class="fas fa-award"></i>
+            <div>
+              <strong>Award Winning</strong>
+              <span>AI Technology 2024</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-text" data-aos="fade-left">
+        <p class="about-description">{{ aboutContent.description }}</p>
+        
+        <div class="about-features">
+          <div class="feature-item" *ngFor="let feature of aboutContent.features">
+            <div class="feature-icon">
+              <i class="fas" [ngClass]="feature.icon"></i>
+            </div>
+            <div class="feature-content">
+              <h3>{{ feature.title }}</h3>
+              <p>{{ feature.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="services-section">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-badge">
+        <i class="fas fa-stethoscope"></i>
+        Our Services
+      </span>
+      <h2 class="section-title">Diseases We Detect</h2>
+      <p class="section-subtitle">Advanced AI analysis for 5 major skin diseases with industry-leading accuracy</p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card" 
+           *ngFor="let service of services; let i = index" 
+           [attr.data-aos]="'fade-up'"
+           [attr.data-aos-delay]="i * 100">
+        <div class="service-header" [style.background]="service.color">
+          <i class="fas" [ngClass]="service.icon"></i>
+        </div>
+        <div class="service-body">
+          <h3 class="service-title">{{ service.name }}</h3>
+          <p class="service-description">{{ service.description }}</p>
+          
+          <div class="service-metrics">
+            <div class="metric">
+              <i class="fas fa-bullseye"></i>
+              <span>{{ service.accuracy }}% Accuracy</span>
+            </div>
+            <div class="metric">
+              <i class="fas fa-stopwatch"></i>
+              <span>{{ service.detectionTime }} Detection</span>
+            </div>
+          </div>
+
+          <div class="service-symptoms">
+            <h4>Common Symptoms:</h4>
+            <div class="symptoms-list">
+              <span *ngFor="let symptom of service.symptoms" class="symptom-tag">
+                <i class="fas fa-check"></i>
+                {{ symptom }}
+              </span>
+            </div>
+          </div>
+
+          <button class="btn-details" (click)="openServiceDetails(service)">
+            <span>Learn More</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Team Section -->
+<section id="team" class="team-section">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-badge">
+        <i class="fas fa-users"></i>
+        Our Team
+      </span>
+      <h2 class="section-title">Meet Our Expert Team</h2>
+      <p class="section-subtitle">World-class medical professionals and AI researchers</p>
+    </div>
+
+    <div class="team-grid">
+      <div class="team-card" 
+           *ngFor="let member of team; let i = index"
+           [attr.data-aos]="'zoom-in'"
+           [attr.data-aos-delay]="i * 100">
+        <div class="team-image">
+          <i class="fas" [ngClass]="member.image"></i>
+          <div class="team-overlay">
+            <div class="social-links">
+              <a [href]="member.social.linkedin" aria-label="LinkedIn">
+                <i class="fab fa-linkedin"></i>
+              </a>
+              <a [href]="member.social.twitter" aria-label="Twitter">
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a [href]="'mailto:' + member.social.email" aria-label="Email">
+                <i class="fas fa-envelope"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="team-content">
+          <h3 class="team-name">{{ member.name }}</h3>
+          <p class="team-role">{{ member.role }}</p>
+          <p class="team-specialty">
+            <i class="fas fa-graduation-cap"></i>
+            {{ member.specialty }}
+          </p>
+          <p class="team-bio">{{ member.bio }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section id="testimonials" class="testimonials-section">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-badge">
+        <i class="fas fa-comments"></i>
+        Testimonials
+      </span>
+      <h2 class="section-title">What Healthcare Professionals Say</h2>
+      <p class="section-subtitle">Trusted by thousands of medical professionals worldwide</p>
+    </div>
+
+    <div class="testimonials-carousel" data-aos="fade-up">
+      <button class="carousel-btn prev" (click)="previousTestimonial()" aria-label="Previous testimonial">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <div class="testimonial-container">
+        <div class="testimonial-card" *ngFor="let testimonial of testimonials; let i = index"
+             [class.active]="i === activeTestimonial">
+          <div class="testimonial-quote">
+            <i class="fas fa-quote-left"></i>
+          </div>
+          <div class="testimonial-rating">
+            <i class="fas fa-star" *ngFor="let star of getStarArray(testimonial.rating)"></i>
+          </div>
+          <p class="testimonial-text">{{ testimonial.text }}</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">
+              <i class="fas" [ngClass]="testimonial.avatar"></i>
+            </div>
+            <div class="author-info">
+              <h4>{{ testimonial.name }}</h4>
+              <p>{{ testimonial.role }}</p>
+              <span class="testimonial-date">
+                <i class="fas fa-calendar-alt"></i>
+                {{ testimonial.date }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="carousel-btn next" (click)="nextTestimonial()" aria-label="Next testimonial">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+
+      <div class="carousel-dots">
+        <span *ngFor="let testimonial of testimonials; let i = index"
+              class="dot"
+              [class.active]="i === activeTestimonial"
+              (click)="activeTestimonial = i"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="contact-section">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-badge">
+        <i class="fas fa-envelope"></i>
+        Get In Touch
+      </span>
+      <h2 class="section-title">Contact Us</h2>
+      <p class="section-subtitle">Have questions? We're here to help</p>
+    </div>
+
+    <div class="contact-content">
+      <div class="contact-info" data-aos="fade-right">
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <div class="info-content">
+            <h3>Address</h3>
+            <p>123 Medical Plaza, Suite 500<br>Healthcare District, NY 10001</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fas fa-phone-alt"></i>
+          </div>
+          <div class="info-content">
+            <h3>Phone</h3>
+            <p>+1 (555) 123-4567<br>Mon-Fri 9AM - 6PM EST</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="info-content">
+            <h3>Email</h3>
+            <p>support&#64;dermai.com<br>info&#64;dermai.com</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="info-content">
+            <h3>Support Hours</h3>
+            <p>24/7 Emergency Support<br>Available for Healthcare Partners</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-wrapper" data-aos="fade-left">
+        <form class="contact-form" (ngSubmit)="submitContactForm()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">
+                <i class="fas fa-user"></i>
+                Full Name *
+              </label>
+              <input 
+                type="text" 
+                id="name" 
+                [(ngModel)]="contactForm.name"
+                name="name"
+                placeholder="Dr. John Smith"
+                required>
+            </div>
+
+            <div class="form-group">
+              <label for="email">
+                <i class="fas fa-envelope"></i>
+                Email Address *
+              </label>
+              <input 
+                type="email" 
+                id="email" 
+                [(ngModel)]="contactForm.email"
+                name="email"
+                placeholder="john.smith@hospital.com"
+                required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">
+                <i class="fas fa-phone"></i>
+                Phone Number
+              </label>
+              <input 
+                type="tel" 
+                id="phone" 
+                [(ngModel)]="contactForm.phone"
+                name="phone"
+                placeholder="+1 (555) 123-4567">
+            </div>
+
+            <div class="form-group">
+              <label for="userType">
+                <i class="fas fa-user-tag"></i>
+                I am a
+              </label>
+              <select id="userType" [(ngModel)]="contactForm.userType" name="userType">
+                <option value="healthcare">Healthcare Professional</option>
+                <option value="researcher">Researcher</option>
+                <option value="patient">Patient</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="subject">
+              <i class="fas fa-tag"></i>
+              Subject
+            </label>
+            <input 
+              type="text" 
+              id="subject" 
+              [(ngModel)]="contactForm.subject"
+              name="subject"
+              placeholder="Partnership Inquiry">
+          </div>
+
+          <div class="form-group">
+            <label for="message">
+              <i class="fas fa-comment-alt"></i>
+              Message *
+            </label>
+            <textarea 
+              id="message" 
+              [(ngModel)]="contactForm.message"
+              name="message"
+              rows="5"
+              placeholder="Tell us how we can help you..."
+              required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            <i class="fas fa-paper-plane"></i>
+            Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-main">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-logo">
+            <i class="fas fa-heartbeat"></i>
+            <span>DermAI</span>
+          </div>
+          <p class="footer-description">
+            Leading AI-powered skin disease detection platform trusted by healthcare professionals worldwide.
+          </p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a (click)="scrollToSection('about')"><i class="fas fa-chevron-right"></i> About Us</a></li>
+            <li><a (click)="scrollToSection('services')"><i class="fas fa-chevron-right"></i> Services</a></li>
+            <li><a (click)="scrollToSection('team')"><i class="fas fa-chevron-right"></i> Our Team</a></li>
+            <li><a (click)="scrollToSection('contact')"><i class="fas fa-chevron-right"></i> Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Services</h3>
+          <ul>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Cowpox Detection</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Monkeypox Analysis</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> HFMD Diagnosis</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Measles Screening</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Chickenpox Detection</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Resources</h3>
+          <ul>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Documentation</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> API Access</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Research Papers</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="footer-bottom-content">
+        <p>&copy; {{ getCurrentYear() }} DermAI. All rights reserved.</p>
+        <div class="footer-badges">
+          <span><i class="fas fa-shield-alt"></i> HIPAA Compliant</span>
+          <span><i class="fas fa-certificate"></i> FDA Approved</span>
+          <span><i class="fas fa-lock"></i> ISO 27001 Certified</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Service Details Modal -->
+<div class="modal-overlay" *ngIf="selectedService" (click)="closeServiceDetails()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button type="button" title="close" class="modal-close" (click)="closeServiceDetails()">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <div class="modal-header" [style.background]="selectedService.color">
+      <i class="fas" [ngClass]="selectedService.icon"></i>
+      <h2>{{ selectedService.name }}</h2>
+    </div>
+
+    <div class="modal-body">
+      <p class="modal-description">{{ selectedService.description }}</p>
+      
+      <div class="modal-stats">
+        <div class="modal-stat">
+          <i class="fas fa-bullseye"></i>
+          <strong>{{ selectedService.accuracy }}%</strong>
+          <span>Accuracy Rate</span>
+        </div>
+        <div class="modal-stat">
+          <i class="fas fa-stopwatch"></i>
+          <strong>{{ selectedService.detectionTime }}</strong>
+          <span>Detection Time</span>
+        </div>
+      </div>
+
+      <div class="modal-symptoms">
+        <h3><i class="fas fa-list-ul"></i> Common Symptoms</h3>
+        <ul>
+          <li *ngFor="let symptom of selectedService.symptoms">
+            <i class="fas fa-check-circle"></i>
+            {{ symptom }}
+          </li>
+        </ul>
+      </div>
+
+      <button class="btn btn-primary btn-block" (click)="closeServiceDetails(); triggerFileUpload()">
+        <i class="fas fa-upload"></i>
+        Upload Image for Analysis
+      </button>
+    </div>
+  </div>
+</div>

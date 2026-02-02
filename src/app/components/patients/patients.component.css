@@ -1,0 +1,9 @@
+@media screen and (max-width: 768px) {
+  table {
+    font-size: 0.5rem;
+    width: 100%;
+  }
+  tbody tr td button {
+    font-size: 0.5rem;
+  }
+}/*# sourceMappingURL=patients.component.css.map */

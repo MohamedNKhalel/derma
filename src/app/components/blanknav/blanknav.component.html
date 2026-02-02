@@ -1,0 +1,193 @@
+<nav #navbar class="navbar" [class.scrolled]="isScrolled">
+  <div class="navbar-container">
+    
+    <!-- Logo -->
+    <a class="navbar-logo" routerLink="/patients">
+      <div class="logo-icon">
+        <i class="fa-solid fa-heart-pulse"></i>
+      </div>
+      <span class="logo-text">DERMAI</span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <div class="navbar-menu desktop-only">
+      <a 
+        class="nav-link" 
+        routerLink="/patients" 
+        routerLinkActive="active">
+        <i class="fa-solid fa-hospital-user"></i>
+        <span>Patients</span>
+      </a>
+      <a 
+        class="nav-link" 
+        routerLink="/scan" 
+        routerLinkActive="active">
+        <i class="fa-solid fa-camera"></i>
+        <span>Scan</span>
+      </a>
+      <a 
+        class="nav-link" 
+        routerLink="/analytics" 
+        routerLinkActive="active">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Analytics</span>
+      </a>
+      <a 
+        class="nav-link" 
+        routerLink="/profile" 
+        routerLinkActive="active">
+        <i class="fa-solid fa-user"></i>
+        <span>Profile</span>
+      </a>
+    </div>
+
+    <!-- User Menu -->
+    <div class="navbar-actions">
+      <!-- Notifications (Optional) -->
+      <button class="icon-btn desktop-only" title="Notifications">
+        <i class="fa-solid fa-bell"></i>
+        <span class="notification-badge">3</span>
+      </button>
+
+      <!-- User Profile Dropdown -->
+      <div class="user-menu desktop-only">
+        <button class="user-button" (click)="toggleOptions($event)">
+          <div class="user-avatar">
+            <img *ngIf="user?.photoURL" [src]="user.photoURL" alt="User">
+            <div *ngIf="!user?.photoURL" class="avatar-placeholder">
+              {{ getInitials(user?.displayName) }}
+            </div>
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ user?.displayName || 'User' }}</span>
+            <span class="user-role">Doctor</span>
+          </div>
+          <i class="fa-solid fa-chevron-down" [class.rotated]="options"></i>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div *ngIf="options" class="dropdown-menu" [@dropdownAnimation]>
+          <div class="dropdown-header">
+            <div class="dropdown-user-avatar">
+              <img *ngIf="user?.photoURL" [src]="user.photoURL" alt="User">
+              <div *ngIf="!user?.photoURL" class="avatar-placeholder">
+                {{ getInitials(user?.displayName) }}
+              </div>
+            </div>
+            <div class="dropdown-user-info">
+              <p class="dropdown-user-name">{{ user?.displayName }}</p>
+              <p class="dropdown-user-email">{{ user?.email }}</p>
+            </div>
+          </div>
+
+          <div class="dropdown-divider"></div>
+
+          <a class="dropdown-item" routerLink="/profile" (click)="toggleOptions()">
+            <i class="fa-solid fa-user"></i>
+            <span>My Profile</span>
+          </a>
+          <a class="dropdown-item" routerLink="/settings" (click)="toggleOptions()">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+          </a>
+          <a class="dropdown-item" routerLink="/help" (click)="toggleOptions()">
+            <i class="fa-solid fa-circle-question"></i>
+            <span>Help & Support</span>
+          </a>
+
+          <div class="dropdown-divider"></div>
+
+          <button class="dropdown-item danger" (click)="signOut()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button title="mobile" class="mobile-menu-toggle mobile-only" (click)="toggleMobileMenu()">
+        <i class="fa-solid" [ngClass]="mobileMenuOpen ? 'fa-xmark' : 'fa-bars'"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div *ngIf="mobileMenuOpen" class="mobile-overlay" (click)="closeMobileMenu()"></div>
+
+<!-- Mobile Menu -->
+<div *ngIf="mobileMenuOpen" class="mobile-menu" [@mobileMenuAnimation]>
+  <!-- Mobile User Info -->
+  <div class="mobile-user-section">
+    <div class="mobile-user-avatar">
+      <img *ngIf="user?.photoURL" [src]="user.photoURL" alt="User">
+      <div *ngIf="!user?.photoURL" class="avatar-placeholder">
+        {{ getInitials(user?.displayName) }}
+      </div>
+    </div>
+    <div class="mobile-user-info">
+      <h3>{{ user?.displayName || 'User' }}</h3>
+      <p>{{ user?.email }}</p>
+    </div>
+  </div>
+
+  <div class="mobile-divider"></div>
+
+  <!-- Mobile Navigation Links -->
+  <div class="mobile-nav-links">
+    <a 
+      class="mobile-nav-link" 
+      routerLink="/patients" 
+      routerLinkActive="active"
+      (click)="closeMobileMenu()">
+      <i class="fa-solid fa-hospital-user"></i>
+      <span>Patients</span>
+      <i class="fa-solid fa-chevron-right"></i>
+    </a>
+    <a 
+      class="mobile-nav-link" 
+      routerLink="/scan" 
+      routerLinkActive="active"
+      (click)="closeMobileMenu()">
+      <i class="fa-solid fa-camera"></i>
+      <span>Scan</span>
+      <i class="fa-solid fa-chevron-right"></i>
+    </a>
+    <a 
+      class="mobile-nav-link" 
+      routerLink="/analytics" 
+      routerLinkActive="active"
+      (click)="closeMobileMenu()">
+      <i class="fa-solid fa-chart-line"></i>
+      <span>Analytics</span>
+      <i class="fa-solid fa-chevron-right"></i>
+    </a>
+    <a 
+      class="mobile-nav-link" 
+      routerLink="/profile" 
+      routerLinkActive="active"
+      (click)="closeMobileMenu()">
+      <i class="fa-solid fa-user"></i>
+      <span>Profile</span>
+      <i class="fa-solid fa-chevron-right"></i>
+    </a>
+  </div>
+
+  <div class="mobile-divider"></div>
+
+  <!-- Mobile Menu Actions -->
+  <div class="mobile-menu-actions">
+    <button class="mobile-action-btn" (click)="navigateTo('/settings')">
+      <i class="fa-solid fa-gear"></i>
+      <span>Settings</span>
+    </button>
+    <button class="mobile-action-btn" (click)="navigateTo('/help')">
+      <i class="fa-solid fa-circle-question"></i>
+      <span>Help & Support</span>
+    </button>
+    <button class="mobile-action-btn danger" (click)="signOut()">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span>Sign Out</span>
+    </button>
+  </div>
+</div>

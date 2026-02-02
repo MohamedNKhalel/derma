@@ -1,0 +1,270 @@
+<section class="profile-container">
+  <div class="container py-5">
+    
+    <!-- Profile Header Card -->
+    <div class="profile-header" [@fadeIn]>
+      <div class="cover-photo"></div>
+      <div class="profile-content">
+        <div class="profile-avatar-section">
+          <div class="avatar-wrapper" (click)="toggleShowPhoto()">
+            <img *ngIf="user?.photoURL" [src]="user.photoURL" alt="Profile" class="profile-avatar">
+            <div *ngIf="!user?.photoURL" class="profile-avatar-placeholder">
+              {{ getInitials(user?.displayName) }}
+            </div>
+            <div class="avatar-overlay">
+              <i class="fa-solid fa-camera"></i>
+              <span>Change Photo</span>
+            </div>
+          </div>
+          
+          <div class="profile-info">
+            <h1 class="profile-name">{{ user?.displayName }}</h1>
+            <p class="profile-email">
+              <i class="fa-solid fa-envelope me-2"></i>
+              {{ user?.email }}
+            </p>
+            <div class="profile-badges">
+              <span class="badge" [class.verified]="user?.emailVerified" [class.unverified]="!user?.emailVerified">
+                <i class="fa-solid" [ngClass]="user?.emailVerified ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+                {{ user?.emailVerified ? 'Verified' : 'Not Verified' }}
+              </span>
+              <button *ngIf="!user?.emailVerified" class="btn-verify" (click)="sendVerificationEmail()">
+                Send Verification Email
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Stats -->
+        <div class="profile-stats">
+          <div class="stat-item">
+            <i class="fa-solid fa-calendar-days"></i>
+            <div class="stat-content">
+              <span class="stat-label">Member Since</span>
+              <span class="stat-value">{{ user?.metadata?.creationTime | date:'mediumDate' }}</span>
+            </div>
+          </div>
+          <div class="stat-item">
+            <i class="fa-solid fa-clock"></i>
+            <div class="stat-content">
+              <span class="stat-label">Last Login</span>
+              <span class="stat-value">{{ user?.metadata?.lastSignInTime | date:'short' }}</span>
+            </div>
+          </div>
+          <div class="stat-item">
+            <i class="fa-solid fa-chart-line"></i>
+            <div class="stat-content">
+              <span class="stat-label">Account Age</span>
+              <span class="stat-value">{{ formatAccountAge() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Details Section -->
+    <div class="profile-details" [@fadeIn]>
+      <div class="section-header">
+        <h2>
+          <i class="fa-solid fa-user-pen me-2"></i>
+          Personal Information
+        </h2>
+      </div>
+
+      <div class="details-grid">
+        <!-- Full Name -->
+        <div class="detail-card">
+          <label class="detail-label">
+            <i class="fa-solid fa-user me-2"></i>
+            Full Name
+          </label>
+          <div class="detail-input-group">
+            <input 
+              type="text" 
+              class="detail-input" 
+              [(ngModel)]="newName"
+              [disabled]="!editingName"
+              placeholder="Enter your name">
+            <div class="detail-actions">
+              <button *ngIf="!editingName" class="btn-icon" (click)="startEditName()" title="Edit name">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button *ngIf="editingName" class="btn-icon success" (click)="saveEditName()" title="Save">
+                <i class="fa-solid fa-check"></i>
+              </button>
+              <button *ngIf="editingName" class="btn-icon danger" (click)="cancelEditName()" title="Cancel">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="detail-card">
+          <label class="detail-label">
+            <i class="fa-solid fa-envelope me-2"></i>
+            Email Address
+          </label>
+          <div class="detail-input-group">
+            <input 
+              type="email" 
+              class="detail-input" 
+              [value]="user?.email"
+              disabled
+              placeholder="Email address">
+            <div class="detail-note">
+              <i class="fa-solid fa-info-circle me-1"></i>
+              Email cannot be changed
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="detail-card">
+          <label class="detail-label">
+            <i class="fa-solid fa-phone me-2"></i>
+            Phone Number
+          </label>
+          <div class="detail-input-group">
+            <input 
+              type="tel" 
+              class="detail-input" 
+              [value]="user?.phoneNumber || 'Not assigned'"
+              disabled
+              placeholder="Phone number">
+          </div>
+        </div>
+
+        <!-- User ID -->
+        <div class="detail-card">
+          <label class="detail-label">
+            <i class="fa-solid fa-fingerprint me-2"></i>
+            User ID
+          </label>
+          <div class="detail-input-group">
+            <input 
+              type="text" 
+              class="detail-input" 
+              [value]="user?.uid"
+              disabled
+              placeholder="User ID">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Security Section -->
+    <div class="security-section" [@fadeIn]>
+      <div class="section-header">
+        <h2>
+          <i class="fa-solid fa-shield-halved me-2"></i>
+          Account Security
+        </h2>
+      </div>
+      
+      <div class="security-cards">
+        <div class="security-card">
+          <div class="security-icon">
+            <i class="fa-solid fa-key"></i>
+          </div>
+          <div class="security-content">
+            <h3>Password</h3>
+            <p>Last changed: Never</p>
+            <button class="btn-secondary">Change Password</button>
+          </div>
+        </div>
+
+        <div class="security-card">
+          <div class="security-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div class="security-content">
+            <h3>Two-Factor Authentication</h3>
+            <p>Add an extra layer of security</p>
+            <button class="btn-secondary">Enable 2FA</button>
+          </div>
+        </div>
+
+        <div class="security-card">
+          <div class="security-icon">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+          <div class="security-content">
+            <h3>Login History</h3>
+            <p>View your recent activity</p>
+            <button class="btn-secondary">View History</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Photo Upload Modal -->
+<div *ngIf="showEditPhoto" class="photo-modal " (click)="toggleShowPhoto()" [@slideIn]>
+  <div class="modal-content" (click)="stop($event)">
+    <div class="modal-header">
+      <h3>
+        <i class="fa-solid fa-image me-2"></i>
+        Update Profile Photo
+      </h3>
+      <button type="button" title="close" class="btn-close" (click)="toggleShowPhoto()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <ngx-dropzone 
+        class="custom-dropzone overflow-hidden" 
+        (change)="onSelect($event)"
+        [multiple]="false"
+        accept="image/*">
+        <ngx-dropzone-label>
+          <div class="dropzone-content">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <h4>Drop your photo here</h4>
+            <p>or click to browse</p>
+            <span class="file-info">Supported: JPG, PNG, GIF (Max 5MB)</span>
+          </div>
+        </ngx-dropzone-label>
+        <ngx-dropzone-preview 
+          *ngFor="let f of files" 
+          [removable]="true" 
+          (removed)="onRemove(f)">
+          <ngx-dropzone-label>{{ f.name }} ({{ (f.size / 1024 / 1024).toFixed(2) }}MB)</ngx-dropzone-label>
+        </ngx-dropzone-preview>
+      </ngx-dropzone>
+
+      <div *ngIf="photoLoadingFlag" class="upload-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+        </div>
+        <span class="progress-text">Uploading... {{ uploadProgress.toFixed(0) }}%</span>
+      </div>
+
+      <button 
+        [disabled]="disableButton || photoLoadingFlag" 
+        type="button" 
+        (click)="sendImage()" 
+        class="btn-upload">
+        <i *ngIf="!photoLoadingFlag" class="fa-solid fa-check me-2"></i>
+        <i *ngIf="photoLoadingFlag" class="fa fa-spinner fa-spin me-2"></i>
+        {{ photoLoadingFlag ? 'Uploading...' : 'Update Photo' }}
+      </button>
+
+      <div class="upload-tips">
+        <h4>
+          <i class="fa-solid fa-lightbulb me-2"></i>
+          Tips for best results
+        </h4>
+        <ul>
+          <li><i class="fa-solid fa-check me-2"></i>Use a clear, high-quality photo</li>
+          <li><i class="fa-solid fa-check me-2"></i>Ensure your face is clearly visible</li>
+          <li><i class="fa-solid fa-check me-2"></i>Use a square crop (1:1 ratio) for best fit</li>
+          <li><i class="fa-solid fa-check me-2"></i>Good lighting makes a big difference</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

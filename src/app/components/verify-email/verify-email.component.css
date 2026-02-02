@@ -1,0 +1,66 @@
+.main {
+  padding-top: 110px;
+  background-color: hsl(231, 7%, 60%);
+}
+
+.message-card {
+  background-color: white;
+  padding: 45px;
+  border-radius: 15px;
+  width: 400px;
+}
+
+.message-body h2 {
+  color: hsl(234, 29%, 20%);
+  font-weight: 800;
+  font-size: 35px;
+}
+
+.message-body p {
+  font-size: 14px;
+}
+
+.message-card button {
+  padding: 10px;
+  background-color: hsl(234, 29%, 20%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  transition: all 0.5s ease;
+}
+
+.message-card button:hover {
+  background-color: hsl(4, 100%, 67%);
+}
+
+.message-body .highlight {
+  color: hsl(234, 29%, 20%);
+  font-weight: 700;
+}
+
+@media screen and (max-width: 768px) {
+  .mobile {
+    display: block;
+  }
+  .desktop {
+    display: none;
+  }
+  .item {
+    font-size: 14px;
+    width: 100%;
+    border-radius: 0;
+    height: 100%;
+  }
+  .one {
+    order: 2;
+  }
+  .two {
+    order: 1;
+  }
+  .message-card {
+    height: 100vh;
+    border-radius: 0;
+    justify-content: space-between;
+    width: 100%;
+  }
+}/*# sourceMappingURL=verify-email.component.css.map */

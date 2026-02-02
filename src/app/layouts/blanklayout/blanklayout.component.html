@@ -1,0 +1,13 @@
+<app-blanknav></app-blanknav>
+<div class="container-fluid all">
+    <div class="row">
+        <div [class]="state?'col-md-2' : 'col-md-1' "  class=" side-nav px-0 ">
+            <app-side-nav (mynav)="changeLayoutClicked($event)"></app-side-nav>
+        </div>
+        <div [class]="state?'col-md-9' : 'col-md-10' " class=" content px-0">
+            <router-outlet></router-outlet>
+            <app-chat></app-chat>
+        </div>
+    </div>
+</div>
+<!-- <app-footer></app-footer> -->

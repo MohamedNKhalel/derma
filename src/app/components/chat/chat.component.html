@@ -1,0 +1,155 @@
+<!-- Chat Toggle Button -->
+<div class="chat-toggle" *ngIf="!chat">
+  <button 
+    class="chat-button" 
+    (click)="toggleChat()" 
+    cdkDrag
+    title="Open DERMA Assistant">
+    <img src="assets/images/assist.png" alt="Assistant" class="chat-icon">
+    <span class="pulse-ring"></span>
+  </button>
+</div>
+
+<!-- Chat Window -->
+<div *ngIf="chat" class="chat-window" [@slideIn]>
+  <div class="chat-container">
+    
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="header-content">
+        <div class="header-left">
+          <img src="assets/images/assist.png" alt="DERMA" class="header-logo">
+          <div class="header-info">
+            <h3 class="header-title">DERMA Assistant</h3>
+            <span class="header-status">
+              <span class="status-dot"></span>
+              Online
+            </span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button 
+            class="icon-button" 
+            (click)="toggleMinimize()" 
+            title="Minimize">
+            <i class="fa-solid" [ngClass]="isMinimized ? 'fa-window-maximize' : 'fa-window-minimize'"></i>
+          </button>
+          <button 
+            class="icon-button" 
+            (click)="clearChat()" 
+            title="Clear chat">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+          <button 
+            class="icon-button" 
+            (click)="exportChat()" 
+            title="Export chat">
+            <i class="fa-solid fa-download"></i>
+          </button>
+          <button 
+            class="icon-button close-button" 
+            (click)="toggleChat()" 
+            title="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="chat-body" #chatBody [class.minimized]="isMinimized">
+      
+      <!-- Suggested Prompts (shown when no messages) -->
+      <div *ngIf="messages.length <= 1" class="suggested-prompts" [@fadeIn]>
+        <p class="suggestions-title">Quick questions to get started:</p>
+        <div class="prompt-chips">
+          <button 
+            *ngFor="let suggestion of suggestedPrompts" 
+            class="prompt-chip"
+            (click)="useSuggestedPrompt(suggestion)">
+            {{ suggestion }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages-container">
+        <div 
+          *ngFor="let message of messages; let i = index" 
+          class="message-wrapper"
+          [class.user-message]="message.role === 'user'"
+          [class.assistant-message]="message.role === 'assistant'"
+          [@fadeIn]>
+          
+          <!-- User Message -->
+          <div *ngIf="message.role === 'user'" class="message user">
+            <div class="message-content">
+              <div class="message-bubble">
+                {{ message.content }}
+              </div>
+              <span class="message-time">{{ message.timestamp | date:'shortTime' }}</span>
+            </div>
+            <div class="message-avatar user-avatar">
+              {{ userInitials }}
+            </div>
+          </div>
+
+          <!-- Assistant Message -->
+          <div *ngIf="message.role === 'assistant'" class="message assistant">
+            <div class="message-avatar assistant-avatar">
+              <img src="assets/images/assist.png" alt="AI">
+            </div>
+            <div class="message-content">
+              <div class="message-bubble">
+                <!-- Typing Indicator -->
+                <div *ngIf="message.isTyping" class="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <!-- Message Content -->
+                <div 
+                  *ngIf="!message.isTyping" 
+                  class="message-text" 
+                  [innerHTML]="message.content">
+                </div>
+              </div>
+              <span *ngIf="!message.isTyping" class="message-time">
+                {{ message.timestamp | date:'shortTime' }}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="chat-footer" *ngIf="!isMinimized">
+      <div class="input-container">
+        <input 
+          #messageInput
+          type="text" 
+          class="message-input" 
+          [(ngModel)]="prompt"
+          (keyup.enter)="generateContent()"
+          placeholder="Type your message..."
+          [disabled]="loading">
+        
+        <button 
+          class="send-button" 
+          (click)="generateContent()"
+          [disabled]="!prompt.trim() || loading"
+          title="Send message">
+          <i *ngIf="!loading" class="fa-solid fa-paper-plane"></i>
+          <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
+        </button>
+      </div>
+      <p class="footer-note">
+        <i class="fa-solid fa-shield-halved"></i>
+        AI responses may contain errors. Verify important information.
+      </p>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,11 @@
+input:disabled {
+  color: black !important;
+}
+
+mat-label {
+  color: var(--main-color) !important;
+}
+
+mat-form-field {
+  width: 100%;
+}/*# sourceMappingURL=patient-details.component.css.map */

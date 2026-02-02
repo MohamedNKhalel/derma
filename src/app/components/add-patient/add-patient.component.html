@@ -1,0 +1,73 @@
+<section>
+    <div class="container">
+                <div class="py-3">
+                    <div class="p-4">
+                        <form  [formGroup]="createPatientForm" class="example-form mt-4 w-100">
+                            <div>
+                                <mat-form-field class="example-full-width" appearance="outline">
+                                    <mat-label>Patient Name</mat-label>
+                                    <input formControlName="name"   type="text" matInput placeholder="Enter patient full name">
+                                    <mat-error *ngIf="createPatientForm.get('name')?.errors?.['required']" >
+                                        Patient name is <strong>required</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="createPatientForm.get('name')?.errors?.['minlength']">
+                                        Name length must be at least <strong>3</strong> characters
+                                    </mat-error>
+                                    <mat-error *ngIf="createPatientForm.get('name')?.errors?.['maxlength']">
+                                        Name length must be at most <strong>20</strong> characters
+                                    </mat-error>
+                                </mat-form-field>
+                                <!-- <mat-form-field class="w-100">
+                                    <mat-label>Select gender</mat-label>
+                                    <mat-select formControlName="gender">
+                                        <mat-option *ngFor="let gender of genders" [value]="gender.value">
+                                            {{gender.viewValue}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="createPatientForm.get('gender')?.errors?.['required']" >
+                                        Gender is <strong>required</strong>
+                                        </mat-error>
+                                </mat-form-field> -->
+                                
+                                <mat-form-field class="example-full-width" appearance="outline">
+                                    <mat-label>Date of birth</mat-label>
+                                    <input formControlName="date_of_birth"   type="date" matInput placeholder="Date">
+                                    <mat-error *ngIf="createPatientForm.get('date_of_birth')?.errors?.['required']" >
+                                        Birth date is <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                                
+                                <mat-form-field class="example-full-width" appearance="outline">
+                                    <mat-label>Email</mat-label>
+                                    <input formControlName="email"   type="text" matInput placeholder="Enter patient email">
+                                    <mat-error *ngIf="createPatientForm.get('email')?.errors?.['email']">
+                                        Please enter a valid email address
+                                    </mat-error>
+                                </mat-form-field>
+                                <mat-form-field class="example-full-width" appearance="outline">
+                                    <mat-label>Phone</mat-label>
+                                    <input formControlName="phone"   type="text" matInput placeholder="Enter patient phone">
+                                    <mat-error *ngIf="createPatientForm.get('phone')?.errors?.['required']" >
+                                        Phone number is <strong>required</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="createPatientForm.get('phone')?.errors?.['pattern']">
+                                        Please enter a valid phone number
+                                    </mat-error>
+                                </mat-form-field>
+                                    <mat-radio-group formControlName="gender" aria-label="Select Gender">
+                                        <!-- <span>Gender : </span> -->
+                                        <mat-radio-button value="Male">Male</mat-radio-button>
+                                        <mat-radio-button value="Female">Female</mat-radio-button>
+                                    </mat-radio-group>
+                            </div>
+                            <div class="d-flex justify-content-end gap-3">
+                                <button [disabled]="createPatientForm.invalid" *ngIf="!state" (click)="addPatient()" type="button" class="btn btn-outline-primary ">Add Patient</button>
+                                <button [disabled]="createPatientForm.invalid" *ngIf="state"  (click)="updatePatient()" type="button" class="btn btn-outline-primary ">Update Patient</button>
+                                <button (click)="close()" type="button" class="btn btn-outline-danger d-block ">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            
+    </div>
+</section>

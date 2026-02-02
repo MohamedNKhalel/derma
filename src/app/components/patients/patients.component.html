@@ -1,0 +1,180 @@
+    <div class="patients-container" @fadeIn>
+    <!-- Header Section -->
+    <div class="page-header">
+        <div class="header-content">
+        <h1 class="page-title">Patients</h1>
+        <p class="page-subtitle">Manage and monitor your patients</p>
+        </div>
+        <button mat-raised-button  class="add-patient-btn" (click)="addPatient()">
+        <mat-icon>person_add</mat-icon>
+        Add New Patient
+        </button>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="filters-section">
+        <div class="search-filters">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search by name</mat-label>
+            <input matInput 
+                [(ngModel)]="searchName" 
+                (ngModelChange)="filterPatients()"
+                placeholder="Enter patient name">
+            <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Filter by gender</mat-label>
+            <mat-select [(ngModel)]="searchGender" (ngModelChange)="filterPatients()">
+            <mat-option value="">All</mat-option>
+            <mat-option value="Male">Male</mat-option>
+            <mat-option value="Female">Female</mat-option>
+            </mat-select>
+            <mat-icon matPrefix>filter_list</mat-icon>
+        </mat-form-field>
+
+        <button mat-stroked-button class="clear-btn" (click)="clearFilters()" *ngIf="searchName || searchGender">
+            <mat-icon>clear</mat-icon>
+            Clear Filters
+        </button>
+        </div>
+
+        <div class="view-controls">
+        <span class="patient-count">{{ filteredPatients.length }} patient{{ filteredPatients.length !== 1 ? 's' : '' }}</span>
+        <button type="button" mat-icon-button (click)="toggleViewMode()" class="view-toggle">
+            <mat-icon >{{ viewMode === 'grid' ? 'view_list' : 'grid_view' }}</mat-icon>
+        </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="loading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading patients...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!loading && filteredPatients.length === 0 && !searchName && !searchGender">
+        <div class="empty-icon">
+        <mat-icon>people_outline</mat-icon>
+        </div>
+        <h2>No Patients Yet</h2>
+        <p>Start by adding your first patient to the system</p>
+        <button mat-raised-button color="primary" (click)="addPatient()">
+        <mat-icon>person_add</mat-icon>
+        Add First Patient
+        </button>
+    </div>
+
+    <!-- No Results State -->
+    <div class="empty-state" *ngIf="!loading && filteredPatients.length === 0 && (searchName || searchGender)">
+        <div class="empty-icon">
+        <mat-icon>search_off</mat-icon>
+        </div>
+        <h2>No Patients Found</h2>
+        <p>Try adjusting your search criteria</p>
+        <button mat-stroked-button (click)="clearFilters()">
+        <mat-icon>clear</mat-icon>
+        Clear Filters
+        </button>
+    </div>
+
+    <!-- Grid View -->
+    <div class="patients-grid" *ngIf="!loading && filteredPatients.length > 0 && viewMode === 'grid'" [@listAnimation]="filteredPatients.length">
+        <div class="patient-card" 
+            *ngFor="let patient of filteredPatients"
+            (click)="viewPatient(patient)">
+        <div class="card-header">
+            <div class="patient-avatar" [class.male]="patient.gender?.toLowerCase() === 'male'" 
+                [class.female]="patient.gender?.toLowerCase() === 'female'">
+            <span>{{ getPatientInitials(patient.name) }}</span>
+            </div>
+            <div class="card-actions">
+            <button mat-icon-button (click)="updatePatient(patient, $event)" class="edit-btn">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="deleteItem(patient, $event)" class="delete-btn">
+                <mat-icon>delete</mat-icon>
+            </button>
+            </div>
+        </div>
+
+        <div class="card-content">
+            <h3 class="patient-name">{{ patient.name }}</h3>
+            
+            <div class="patient-details">
+            <div class="detail-item">
+                <mat-icon>{{ getGenderIcon(patient.gender) }}</mat-icon>
+                <span>{{ patient.gender }}</span>
+            </div>
+            <div class="detail-item">
+                <mat-icon>cake</mat-icon>
+                <span>{{ calculateAge(patient.date_of_birth) }} years</span>
+            </div>
+            <div class="detail-item">
+                <mat-icon>phone</mat-icon>
+                <span>{{ patient.phone || 'No phone' }}</span>
+            </div>
+            <div class="detail-item">
+                <mat-icon>email</mat-icon>
+                <span>{{ patient.email || 'No email' }}</span>
+            </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <mat-chip class="status-chip">Active</mat-chip>
+            <span class="view-link">View Details →</span>
+        </div>
+        </div>
+    </div>
+
+    <!-- List View -->
+    <div class="patients-list" *ngIf="!loading && filteredPatients.length > 0 && viewMode === 'list'" [@listAnimation]="filteredPatients.length">
+        <div class="list-item" 
+            *ngFor="let patient of filteredPatients"
+            (click)="viewPatient(patient)">
+        <div class="item-avatar" [class.male]="patient.gender?.toLowerCase() === 'male'" 
+            [class.female]="patient.gender?.toLowerCase() === 'female'">
+            <span>{{ getPatientInitials(patient.name) }}</span>
+        </div>
+
+        <div class="item-content">
+            <div class="item-main">
+            <h3 class="item-name">{{ patient.name }}</h3>
+            <div class="item-meta">
+                <span class="meta-badge">
+                <mat-icon>{{ getGenderIcon(patient.gender) }}</mat-icon>
+                {{ patient.gender }}
+                </span>
+                <span class="meta-badge">
+                <mat-icon>cake</mat-icon>
+                {{ calculateAge(patient.date_of_birth) }} years
+                </span>
+            </div>
+            </div>
+
+            <div class="item-details">
+            <span class="detail-text">
+                <mat-icon>phone</mat-icon>
+                {{ patient.phone || 'No phone' }}
+            </span>
+            <span class="detail-text">
+                <mat-icon>email</mat-icon>
+                {{ patient.email || 'No email' }}
+            </span>
+            </div>
+        </div>
+
+        <div class="item-actions">
+            <button mat-icon-button (click)="updatePatient(patient, $event)">
+            <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="deleteItem(patient, $event)" class="delete-action">
+            <mat-icon>delete</mat-icon>
+            </button>
+            <mat-icon class="chevron">chevron_right</mat-icon>
+        </div>
+        </div>
+    </div>
+    </div>

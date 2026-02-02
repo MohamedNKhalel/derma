@@ -1,0 +1,66 @@
+
+    $Tomato: hsl(4, 100%, 67%);
+    $Dark-Slate-Grey: hsl(234, 29%, 20%);
+    $Charcoal-Grey: hsl(235, 18%, 26%);
+    $Grey: hsl(231, 7%, 60%);
+    $White: hsl(0, 0%, 100%);
+
+.message{
+    background-color: var(--main-color);
+}
+.message-card{
+    background-color: white;
+    padding: 45px;
+    border-radius: 15px;
+    width: 400px;
+}
+.message-body h2{
+    color: $Dark-Slate-Grey;
+    font-weight: 800;
+    font-size: 35px;
+}
+.message-body p{
+    font-size: 14px;
+}
+.message-card button{
+    padding: 10px;
+    background-color: $Dark-Slate-Grey;
+    color:white;
+    border: none;
+    border-radius: 6px;
+    transition: all .5s ease;
+}
+.message-card button:hover{
+    background-color: $Tomato;
+}
+.message-body .highlight{
+    color: $Dark-Slate-Grey;
+    font-weight: 700;
+}   
+@media screen and (max-width:768px) {
+
+    .mobile{
+        display: block;
+    }
+    .desktop{
+        display: none;
+    }
+    .item{
+        font-size: 14px;
+        width: 100%;
+        border-radius: 0;
+        height: 100%;
+    }
+    .one{
+        order: 2;
+    }
+    .two{
+        order: 1;
+    }
+    .message-card{
+        height: 100vh;
+        border-radius: 0;
+        justify-content: space-between;
+        width: 100%;
+    }
+}

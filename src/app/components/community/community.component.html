@@ -1,0 +1,20 @@
+<div class="container my-5">
+    <div class="mb-3">
+        <label for="search">Search</label>
+        <input  [(ngModel)]="endPoint" type="text" name="search" id="search" placeholder="enter disease name" class="form-control">
+        
+    </div>
+    <div class="row gy-4">
+        <div *ngFor="let disease of diseases" class="col-md-4">
+            <div class="card shadow rounded-2 ">
+                <div class="card-header">
+                    <img class="w-100" [src]="disease?.imageUrl" alt="">
+                </div>
+                <div class="card-body">
+                    <h3><span class="fw-bolder text-uppercase">title :</span> {{disease?.title}}</h3>
+                    <p ><span class="fw-bolder text-uppercase">description :</span> {{disease?.description.split(" ").slice(0,12).join(" ")}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

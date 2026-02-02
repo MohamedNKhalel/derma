@@ -1,0 +1,58 @@
+.copyright {
+  font-size: 1rem;
+}
+
+.foot-logo {
+  justify-content: space-between;
+}
+
+p {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 1.0625rem;
+}
+
+footer {
+  background-color: #F9FBFB;
+}
+
+.store .download-button button {
+  background-color: #000;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-weight: 500;
+  border-radius: 10px;
+  font-size: 1.0625rem;
+}
+.store .download-button button img {
+  width: 40px;
+  margin-right: 5px;
+}
+
+@media screen and (max-width: 768px) {
+  .store {
+    flex-direction: column;
+  }
+  .store .download-button button {
+    font-size: 0.7rem !important;
+  }
+  .store .download-button button img {
+    width: 15px !important;
+  }
+  .buttons {
+    margin-top: 10px;
+  }
+  .foot-logo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  footer h2 {
+    font-size: 20px;
+  }
+  .store p {
+    font-size: 18px;
+  }
+  .copyright {
+    font-size: 0.9rem;
+  }
+}/*# sourceMappingURL=footer.component.css.map */

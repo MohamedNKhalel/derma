@@ -1,0 +1,22 @@
+@media screen and (max-width: 768px) {
+  .card {
+    width: 100% !important;
+  }
+}
+img {
+  width: 100px;
+}
+
+i {
+  cursor: pointer;
+}
+
+.profile-top h3 {
+  font-size: 1.3125rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin: 0;
+}
+.profile-top span {
+  color: rgba(0, 0, 0, 0.5);
+}/*# sourceMappingURL=profile.component.css.map */

@@ -1,0 +1,84 @@
+<section class=" main pt-5">
+    <div class="container shadow  rounded-5">
+        <div class="row align-items-center rounded-5 bg-body-secondary">
+            <div class="col-md-4 offset-1" >
+                <div>
+                    <img class="w-100" src="assets/images/icons/undraw_sign_up_n6im.svg" alt="">
+                </div>
+            </div>
+            <div class="col-md-7 p-5 bg-white">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center"><span [ngStyle]="{'cursor': 'pointer'}" class="fs-6 bg-primary p-2 rounded-3 text-white" (click)="_Router.navigate(['/landing'])"><i class="fa fa-1 fa-arrow-left" ></i></span> <h2 class="text-uppercase m-0 title fw-bolder">Create new account</h2></div>
+                    <form class="example-form mt-5" [formGroup]="registerForm">
+                        <!-- <mat-form-field class="example-full-width mb-2" appearance="outline">
+                            <mat-label>Name</mat-label>
+                            <input #emailInput formControlName="name" type="text" matInput placeholder="Enter Your Name">
+                            <mat-error *ngIf="registerForm.get('name')?.errors?.['required']">
+                                Name is <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="registerForm.get('name')?.errors?.['minlength']">
+                                Minimum length is <strong>3</strong>
+                            </mat-error>
+                            <mat-error  *ngIf="registerForm.get('name')?.errors?.['maxlength']">
+                                Maximum length is <strong>20</strong>
+                            </mat-error>
+                        </mat-form-field> -->
+                        <mat-form-field class="example-full-width mb-2" appearance="outline">
+                            <mat-label>Name</mat-label>
+                            <input name="Name" formControlName="displayName" type="text" matInput placeholder="Enter Your name">
+                        </mat-form-field>
+                        <mat-form-field class="example-full-width mb-2" appearance="outline">
+                            <mat-label>Email</mat-label>
+                            <input name="email" formControlName="email" type="email" matInput placeholder="Enter Your email">
+                            <mat-error *ngIf="registerForm.get('email')?.errors?.['email']">
+                                Please enter a valid email address
+                            </mat-error>
+                            <mat-error *ngIf="registerForm.get('email')?.errors?.['required']">
+                                Email is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <input #password formControlName="password" [type]="eyeFlag?'text': 'password' " matInput placeholder="Enter you password">
+
+                            <i *ngIf="!eyeFlag&&password.value.length>0" (click)="toggleEye()" class="position-absolute top-50 translate-middle-y password-eye fa fa-eye"></i>
+                            <i *ngIf="eyeFlag&&password.value.length>0" (click)="toggleEye()" class="position-absolute top-50 translate-middle-y password-eye fa fa-eye-slash"></i>
+                            <mat-error *ngIf="registerForm.get('password')?.errors?.['required']">
+                                Password is <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="registerForm.get('password')?.errors?.['pattern']">
+                                Password must contain at least one chracter
+                            </mat-error>
+                        </mat-form-field>
+                        <p *ngIf="errMsg" class="alert alert-danger fs-6">{{errMsg}}</p>
+                        <div>
+                            <button (click)="register()" [disabled]="registerForm.invalid" type="button" class="btn-main mt-2 w-100"><span *ngIf="!loadingFlag">Sign up</span><i *ngIf="loadingFlag" class="fa fa-spinner fa-spin"></i></button>
+                        </div>
+                        <!--
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>Age</mat-label>
+                            <input formControlName="age" type="number" matInput placeholder="Enter you password">
+                            <mat-error *ngIf="registerForm.get('age')?.errors?.['required']">
+                                Age is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>Phone</mat-label>
+                            <input formControlName="phone" type="text" matInput placeholder="Enter you phone number">
+                            <mat-error *ngIf="registerForm.get('phone')?.errors?.['required']">
+                                Phone is <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="registerForm.get('phone')?.errors?.['pattern']">
+                                Please enter a valid number
+                            </mat-error>
+                        </mat-form-field> -->
+                    </form> 
+                    <p class="line text-center mt-4">Or</p>  
+                    <div class="d-flex flex-column gap-2 social">
+                            <button (click)="signInIwthGoogle()" class="text-capitalize fs-6"> Sign up with google <img class="google-icon" src="assets/images/google.svg" alt=""></button>
+                    </div>
+                    <p class="mt-3 text-center">already have an account? <a class="text-decoration-none" routerLink="/login" >Sign in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
