@@ -2,24 +2,246 @@
     <!-- Header Section -->
     <div class="records-header">
         <div class="header-content">
-        <h2>Medical Records</h2>
-        <p>View and manage patient's medical scans and documents</p>
+            <h2>Medical Records</h2>
+            <p>View and manage patient's medical scans and documents</p>
         </div>
         <div class="header-actions">
-        <button type="button" title="delte all" mat-stroked-button 
-                class="delete-all-btn" 
-                (click)="deleteAllRecords()"
-                *ngIf="!loading && records?.length ?? 0"
-                [disabled]="records?.length === 0">
-            <mat-icon>delete_sweep</mat-icon>
-            Delete All
-        </button>
-        <button type="button" title="add record" mat-raised-button color="primary" class="add-record-btn" (click)="openAddRecordDialog()">
-            <mat-icon>add</mat-icon>
-            Add Record
-        </button>
+            <button type="button" title="delete all" mat-stroked-button 
+                    class="delete-all-btn" 
+                    (click)="deleteAllRecords()"
+                    *ngIf="!loading && records?.length ?? 0"
+                    [disabled]="records?.length === 0">
+                <mat-icon>delete_sweep</mat-icon>
+                Delete All
+            </button>
+            <button type="button" title="add record" mat-raised-button color="primary" class="add-record-btn" (click)="openAddRecordDialog()">
+                <mat-icon>add</mat-icon>
+                Add Record
+            </button>
         </div>
     </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         NEW SCAN SECTION  (ported from HomeComponent)
+         ══════════════════════════════════════════════════════════════════════ -->
+    <div class="scan-section" @fadeIn>
+
+        <!-- Dropzone + Preview -->
+        <div class="scan-card">
+            <div class="card-header">
+                <mat-icon>cloud_upload</mat-icon>
+                <h3>Quick Scan</h3>
+            </div>
+
+            <ngx-dropzone
+                (change)="onScanSelect($event)"
+                [multiple]="false"
+                [accept]="'image/*'"
+                class="dropzone"
+                [class.has-file]="scanFiles.length > 0"
+                [disabled]="loadingFlag || uploaded">
+                <ngx-dropzone-label>
+                    <div class="dropzone-content">
+                        <mat-icon class="upload-icon">add_photo_alternate</mat-icon>
+                        <h4>Drop medical image here</h4>
+                        <p>or click to browse</p>
+                        <span class="file-types">Supports: JPG, PNG, JPEG</span>
+                    </div>
+                </ngx-dropzone-label>
+
+                <ngx-dropzone-preview
+                    *ngFor="let f of scanFiles"
+                    [removable]="!loadingFlag && !uploaded"
+                    (removed)="onScanRemove(f)"
+                    class="file-preview">
+                    <ngx-dropzone-label>
+                        <div class="preview-info">
+                            <mat-icon>insert_drive_file</mat-icon>
+                            <div class="file-details">
+                                <span class="file-name">{{ f.name }}</span>
+                                <small class="file-size">{{ (f.size / 1024 / 1024).toFixed(2) }} MB</small>
+                            </div>
+                        </div>
+                    </ngx-dropzone-label>
+                </ngx-dropzone-preview>
+            </ngx-dropzone>
+
+            <!-- Thumbnail preview of the picked file -->
+            <div class="image-preview-container" *ngIf="scanPreviewUrl" @scaleIn>
+                <div class="preview-header">
+                    <mat-icon>visibility</mat-icon>
+                    <span>Image Preview</span>
+                </div>
+                <div class="preview-image">
+                    <img [src]="scanPreviewUrl" alt="Scan preview">
+                </div>
+            </div>
+
+            <!-- Analyze button -->
+            <button
+                mat-raised-button
+                color="primary"
+                type="button"
+                class="analyze-btn"
+                [disabled]="!scanReady"
+                (click)="sendImage()">
+                <mat-icon *ngIf="!loadingFlag">biotech</mat-icon>
+                <mat-spinner *ngIf="loadingFlag" diameter="20"></mat-spinner>
+                <span>{{ loadingFlag ? 'Analyzing...' : 'Analyze Now' }}</span>
+            </button>
+        </div>
+
+        <!-- ── Prediction result ── -->
+        <div class="prediction-card" *ngIf="prediction" @fadeIn>
+            <div class="prediction-header">
+                <mat-icon class="result-icon">verified</mat-icon>
+                <h3>AI Diagnosis Result</h3>
+            </div>
+
+            <div class="prediction-content">
+                <div class="diagnosis-badge">
+                    <span class="badge-label">Detected Condition</span>
+                    <h2 class="diagnosis-text">{{ prediction }}</h2>
+                </div>
+
+                <!-- Save flow (not yet saved) -->
+                <div class="save-section" *ngIf="!saved">
+                    <p class="save-message">Save this scan to this patient's medical records</p>
+                    <button
+                        mat-raised-button
+                        color="accent"
+                        type="button"
+                        (click)="saveScan()"
+                        [disabled]="uploaded"
+                        class="save-btn">
+                        <mat-icon *ngIf="!uploaded">save</mat-icon>
+                        <mat-spinner *ngIf="uploaded" diameter="20"></mat-spinner>
+                        <span>{{ uploaded ? 'Saving...' : 'Save Scan' }}</span>
+                    </button>
+
+                    <!-- Progress bar while uploading -->
+                    <div class="upload-progress" *ngIf="uploaded">
+                        <div class="progress-header">
+                            <span>{{ getProgressMessage() }}</span>
+                            <span class="progress-value">{{ percentage }}%</span>
+                        </div>
+                        <mat-progress-bar
+                            mode="determinate"
+                            [value]="percentage"
+                            color="accent">
+                        </mat-progress-bar>
+                    </div>
+                </div>
+
+                <!-- Success state -->
+                <div class="success-section" *ngIf="saved" @scaleIn>
+                    <div class="success-icon">
+                        <mat-icon>check_circle</mat-icon>
+                    </div>
+                    <h4>Scan Saved Successfully!</h4>
+                    <p>The scan has been added to this patient's history</p>
+
+                    <div class="action-buttons">
+                        <button
+                            mat-stroked-button
+                            type="button"
+                            (click)="showDetails()"
+                            class="details-btn">
+                            <mat-icon>{{ detailsClicked ? 'visibility_off' : 'info' }}</mat-icon>
+                            <span>{{ detailsClicked ? 'Hide Details' : 'View Details' }}</span>
+                        </button>
+                        <button
+                            mat-raised-button
+                            color="primary"
+                            type="button"
+                            (click)="startNewScan()"
+                            class="new-scan-btn">
+                            <mat-icon>add</mat-icon>
+                            <span>New Scan</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Disease detail card (shown after "View Details" is clicked) ── -->
+        <div class="details-card" *ngIf="detailsClicked && !isLoading" @fadeIn>
+            <div class="details-header">
+                <mat-icon>medical_information</mat-icon>
+                <h3>Medical Information</h3>
+            </div>
+
+            <div class="details-content">
+                <div class="details-grid">
+                    <!-- Left: text fields -->
+                    <div class="info-column">
+                        <div class="info-field">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Disease Name</mat-label>
+                                <input title="Disease Name" matInput [value]="diseaseName" readonly>
+                                <mat-icon matPrefix>coronavirus</mat-icon>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="info-field">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Description</mat-label>
+                                <textarea title="Description" matInput [value]="description" readonly rows="4"></textarea>
+                                <mat-icon matPrefix>description</mat-icon>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="info-field">
+                            <label class="field-label">
+                                <mat-icon>emergency</mat-icon>
+                                Symptoms
+                            </label>
+                            <div class="symptoms-list">
+                                <mat-chip *ngFor="let symptom of symptoms" class="symptom-chip">
+                                    {{ symptom }}
+                                </mat-chip>
+                            </div>
+                        </div>
+
+                        <div class="info-field">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Treatment</mat-label>
+                                <textarea title="Treatment" matInput [value]="treatment" readonly rows="3"></textarea>
+                                <mat-icon matPrefix>medication</mat-icon>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <!-- Right: reference image -->
+                    <div class="image-column">
+                        <div class="reference-image">
+                            <div class="image-header">
+                                <mat-icon>image</mat-icon>
+                                <span>Reference Image</span>
+                            </div>
+                            <div class="image-container" *ngIf="skinDiseasePhotoUrl">
+                                <img [src]="skinDiseasePhotoUrl" alt="Disease reference">
+                            </div>
+                            <div class="image-placeholder" *ngIf="!skinDiseasePhotoUrl">
+                                <mat-icon>image_not_supported</mat-icon>
+                                <span>No reference image available</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spinner while disease details are loading -->
+        <div class="loading-details" *ngIf="detailsClicked && isLoading" @fadeIn>
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Loading medical information...</p>
+        </div>
+    </div>
+    <!-- ══════════════════════════════════════════════════════════════════════
+         END NEW SCAN SECTION
+         ══════════════════════════════════════════════════════════════════════ -->
+
 
     <!-- Loading State -->
     <div class="loading-state" *ngIf="loading" @fadeIn>
@@ -30,13 +252,13 @@
     <!-- Empty State -->
     <div class="empty-state" *ngIf="!loading && records?.length === 0" @fadeIn>
         <div class="empty-icon">
-        <mat-icon>folder_open</mat-icon>
+            <mat-icon>folder_open</mat-icon>
         </div>
         <h3>No Medical Records</h3>
         <p>This patient doesn't have any medical records yet.</p>
         <button mat-raised-button color="primary" (click)="openAddRecordDialog()">
-        <mat-icon>add</mat-icon>
-        Add First Record
+            <mat-icon>add</mat-icon>
+            Add First Record
         </button>
     </div>
 
@@ -44,206 +266,206 @@
     <div class="records-content" *ngIf="!loading && records?.length ?? 0">
         <!-- Filter Chips -->
         <div class="filter-chips">
-        <mat-chip-set aria-label="Record filters">
-            <mat-chip [class.selected]="selectedFilter === 'all'" (click)="selectedFilter = 'all'">
-            All Records ({{ records.length }})
-            </mat-chip>
-            <mat-chip [class.selected]="selectedFilter === 'scan'" (click)="selectedFilter = 'scan'">
-            Scans
-            </mat-chip>
-            <mat-chip [class.selected]="selectedFilter === 'xray'" (click)="selectedFilter = 'xray'">
-            X-Rays
-            </mat-chip>
-        </mat-chip-set>
+            <mat-chip-set aria-label="Record filters">
+                <mat-chip [class.selected]="selectedFilter === 'all'" (click)="selectedFilter = 'all'">
+                    All Records ({{ records.length }})
+                </mat-chip>
+                <mat-chip [class.selected]="selectedFilter === 'scan'" (click)="selectedFilter = 'scan'">
+                    Scans
+                </mat-chip>
+                <mat-chip [class.selected]="selectedFilter === 'xray'" (click)="selectedFilter = 'xray'">
+                    X-Rays
+                </mat-chip>
+            </mat-chip-set>
         </div>
 
         <!-- Records Grid -->
         <div class="records-grid" @fadeIn>
-        <div class="record-card" 
-            *ngFor="let record of filteredRecords; let i = index"
-            @scaleIn>
-            <!-- Record Image -->
-            <div class="record-image-container" (click)="selectImage(i)">
-            <img alt="" [src]="record.image" 
-                [alt]="'Medical record ' + (i + 1)"
-                class="record-image">
-            <div class="record-overlay">
-                <mat-icon class="zoom-icon">zoom_in</mat-icon>
-                <span>View Full Size</span>
-            </div>
-            <div class="record-number">{{ i + 1 }}</div>
-            </div>
-
-            <!-- Record Info -->
-            <div class="record-info">
-            <div class="record-header">
-                <div class="record-title">
-                <mat-chip class="record-type">{{ getRecordType(record) }}</mat-chip>
-                <h4 class="prediction-text">{{ record.prediction }}</h4>
-                </div>
-                
-                <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-btn">
-                <mat-icon>more_vert</mat-icon>
-                </button>
-                
-                <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="selectImage(i)">
-                    <mat-icon>visibility</mat-icon>
-                    <span>View</span>
-                </button>
-                <button mat-menu-item (click)="downloadRecord(record, i)">
-                    <mat-icon>download</mat-icon>
-                    <span>Download</span>
-                </button>
-                <button mat-menu-item (click)="deleteRecord(i, $event)" class="delete-menu-item">
-                    <mat-icon>delete</mat-icon>
-                    <span>Delete</span>
-                </button>
-                </mat-menu>
-            </div>
-
-            <div class="record-details">
-                <div class="detail-item" *ngIf="record.name">
-                <mat-icon>insert_drive_file</mat-icon>
-                <div class="detail-content">
-                    <span class="detail-label">File Name</span>
-                    <span class="detail-value">{{ record.name }}</span>
-                </div>
+            <div class="record-card"
+                *ngFor="let record of filteredRecords; let i = index"
+                @scaleIn>
+                <!-- Record Image -->
+                <div class="record-image-container" (click)="selectImage(i)">
+                    <img alt="" [src]="record.image"
+                        [alt]="'Medical record ' + (i + 1)"
+                        class="record-image">
+                    <div class="record-overlay">
+                        <mat-icon class="zoom-icon">zoom_in</mat-icon>
+                        <span>View Full Size</span>
+                    </div>
+                    <div class="record-number">{{ i + 1 }}</div>
                 </div>
 
-                <div class="detail-item">
-                <mat-icon>event</mat-icon>
-                <div class="detail-content">
-                    <span class="detail-label">Date & Time</span>
-                    <span class="detail-value">{{ formatDate(date[i]) }}</span>
-                </div>
-                </div>
+                <!-- Record Info -->
+                <div class="record-info">
+                    <div class="record-header">
+                        <div class="record-title">
+                            <mat-chip class="record-type">{{ getRecordType(record) }}</mat-chip>
+                            <h4 class="prediction-text">{{ record.prediction }}</h4>
+                        </div>
 
-                <div class="detail-item" *ngIf="record.treatment">
-                <mat-icon>medical_services</mat-icon>
-                <div class="detail-content">
-                    <span class="detail-label">Treatment Notes</span>
-                    <span class="detail-value">{{ record.treatment }}</span>
-                </div>
-                </div>
+                        <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-btn">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
 
-                <div class="detail-item" *ngIf="record.size">
-                <mat-icon>data_usage</mat-icon>
-                <div class="detail-content">
-                    <span class="detail-label">File Size</span>
-                    <span class="detail-value">{{ (record.size / 1024 / 1024).toFixed(2) }} MB</span>
-                </div>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item (click)="selectImage(i)">
+                                <mat-icon>visibility</mat-icon>
+                                <span>View</span>
+                            </button>
+                            <button mat-menu-item (click)="downloadRecord(record, i)">
+                                <mat-icon>download</mat-icon>
+                                <span>Download</span>
+                            </button>
+                            <button mat-menu-item (click)="deleteRecord(i, $event)" class="delete-menu-item">
+                                <mat-icon>delete</mat-icon>
+                                <span>Delete</span>
+                            </button>
+                        </mat-menu>
+                    </div>
+
+                    <div class="record-details">
+                        <div class="detail-item" *ngIf="record.name">
+                            <mat-icon>insert_drive_file</mat-icon>
+                            <div class="detail-content">
+                                <span class="detail-label">File Name</span>
+                                <span class="detail-value">{{ record.name }}</span>
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <mat-icon>event</mat-icon>
+                            <div class="detail-content">
+                                <span class="detail-label">Date & Time</span>
+                                <span class="detail-value">{{ formatDate(date[i]) }}</span>
+                            </div>
+                        </div>
+
+                        <div class="detail-item" *ngIf="record.treatment">
+                            <mat-icon>medical_services</mat-icon>
+                            <div class="detail-content">
+                                <span class="detail-label">Treatment Notes</span>
+                                <span class="detail-value">{{ record.treatment }}</span>
+                            </div>
+                        </div>
+
+                        <div class="detail-item" *ngIf="record.size">
+                            <mat-icon>data_usage</mat-icon>
+                            <div class="detail-content">
+                                <span class="detail-label">File Size</span>
+                                <span class="detail-value">{{ (record.size / 1024 / 1024).toFixed(2) }} MB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="record-actions">
+                        <button mat-stroked-button class="action-btn" (click)="selectImage(i)">
+                            <mat-icon>visibility</mat-icon>
+                            Preview
+                        </button>
+                        <button mat-stroked-button class="action-btn" (click)="downloadRecord(record, i)">
+                            <mat-icon>download</mat-icon>
+                            Download
+                        </button>
+                        <button mat-icon-button
+                                class="delete-btn"
+                                (click)="deleteRecord(i, $event)"
+                                matTooltip="Delete record">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <!-- Quick Actions -->
-            <div class="record-actions">
-                <button mat-stroked-button class="action-btn" (click)="selectImage(i)">
-                <mat-icon>visibility</mat-icon>
-                Preview
-                </button>
-                <button mat-stroked-button class="action-btn" (click)="downloadRecord(record, i)">
-                <mat-icon>download</mat-icon>
-                Download
-                </button>
-                <button mat-icon-button 
-                        class="delete-btn" 
-                        (click)="deleteRecord(i, $event)"
-                        matTooltip="Delete record">
-                <mat-icon>delete</mat-icon>
-                </button>
-            </div>
-            </div>
-        </div>
         </div>
 
         <!-- Records Statistics -->
         <div class="records-stats">
-        <div class="stat-item">
-            <mat-icon>folder</mat-icon>
-            <div class="stat-content">
-            <span class="stat-value">{{ records.length }}</span>
-            <span class="stat-label">Total Records</span>
+            <div class="stat-item">
+                <mat-icon>folder</mat-icon>
+                <div class="stat-content">
+                    <span class="stat-value">{{ records.length }}</span>
+                    <span class="stat-label">Total Records</span>
+                </div>
             </div>
-        </div>
-        <div class="stat-item">
-            <mat-icon>update</mat-icon>
-            <div class="stat-content">
-            <span class="stat-value">{{ formatDate(date[date.length - 1]) }}</span>
-            <span class="stat-label">Last Updated</span>
+            <div class="stat-item">
+                <mat-icon>update</mat-icon>
+                <div class="stat-content">
+                    <span class="stat-value">{{ formatDate(date[date.length - 1]) }}</span>
+                    <span class="stat-label">Last Updated</span>
+                </div>
             </div>
-        </div>
-        <div class="stat-item">
-            <mat-icon>storage</mat-icon>
-            <div class="stat-content">
-            <span class="stat-value">{{ calculateTotalSize() }}</span>
-            <span class="stat-label">Total Storage</span>
+            <div class="stat-item">
+                <mat-icon>storage</mat-icon>
+                <div class="stat-content">
+                    <span class="stat-value">{{ calculateTotalSize() }}</span>
+                    <span class="stat-label">Total Storage</span>
+                </div>
             </div>
-        </div>
         </div>
     </div>
-    </div>
+</div>
 
-    <!-- Image Preview Modal -->
-    <div class="preview-modal" *ngIf="previewFlag" (click)="closePreview()" @fadeIn>
+<!-- Image Preview Modal (existing, unchanged) -->
+<div class="preview-modal" *ngIf="previewFlag" (click)="closePreview()" @fadeIn>
     <div class="preview-container" (click)="stop($event)">
         <!-- Close Button -->
         <button mat-icon-button class="close-preview" (click)="closePreview()">
-        <mat-icon>close</mat-icon>
+            <mat-icon>close</mat-icon>
         </button>
 
         <!-- Navigation Buttons -->
         <button mat-icon-button class="nav-btn prev" (click)="moveLeft()" *ngIf="records.length > 1">
-        <mat-icon>chevron_left</mat-icon>
+            <mat-icon>chevron_left</mat-icon>
         </button>
         <button mat-icon-button class="nav-btn next" (click)="moveRight()" *ngIf="records.length > 1">
-        <mat-icon>chevron_right</mat-icon>
+            <mat-icon>chevron_right</mat-icon>
         </button>
 
         <!-- Image -->
         <div class="preview-image-container">
-        <img [src]="imageUrl" alt="Medical record preview" class="preview-image">
+            <img [src]="imageUrl" alt="Medical record preview" class="preview-image">
         </div>
 
         <!-- Image Info -->
         <div class="preview-info">
-        <div class="info-left">
-            <mat-chip class="record-type">{{ getRecordType(records[imageIndex]) }}</mat-chip>
-            <div class="info-details">
-            <span class="prediction-label">Diagnosis:</span>
-            <span class="prediction-value">{{ records[imageIndex].prediction }}</span>
+            <div class="info-left">
+                <mat-chip class="record-type">{{ getRecordType(records[imageIndex]) }}</mat-chip>
+                <div class="info-details">
+                    <span class="prediction-label">Diagnosis:</span>
+                    <span class="prediction-value">{{ records[imageIndex].prediction }}</span>
+                </div>
+                <span class="record-date">{{ formatDate(date[imageIndex]) }}</span>
             </div>
-            <span class="record-date">{{ formatDate(date[imageIndex]) }}</span>
-        </div>
-        <div class="info-right">
-            <span class="image-counter">{{ imageIndex + 1 }} / {{ records.length }}</span>
-            <button mat-icon-button (click)="downloadRecord(records[imageIndex], imageIndex)" matTooltip="Download">
-            <mat-icon>download</mat-icon>
-            </button>
-            <button mat-icon-button (click)="deleteRecord(imageIndex, $event)" matTooltip="Delete" class="delete-preview-btn">
-            <mat-icon>delete</mat-icon>
-            </button>
-        </div>
+            <div class="info-right">
+                <span class="image-counter">{{ imageIndex + 1 }} / {{ records.length }}</span>
+                <button mat-icon-button (click)="downloadRecord(records[imageIndex], imageIndex)" matTooltip="Download">
+                    <mat-icon>download</mat-icon>
+                </button>
+                <button mat-icon-button (click)="deleteRecord(imageIndex, $event)" matTooltip="Delete" class="delete-preview-btn">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </div>
         </div>
 
         <!-- Treatment Notes in Preview -->
         <div class="preview-treatment" *ngIf="records[imageIndex].treatment">
-        <div class="treatment-header">
-            <mat-icon>medical_services</mat-icon>
-            <span>Treatment Notes</span>
-        </div>
-        <p class="treatment-text">{{ records[imageIndex].treatment }}</p>
+            <div class="treatment-header">
+                <mat-icon>medical_services</mat-icon>
+                <span>Treatment Notes</span>
+            </div>
+            <p class="treatment-text">{{ records[imageIndex].treatment }}</p>
         </div>
 
         <!-- Thumbnails -->
         <div class="preview-thumbnails" *ngIf="records.length > 1">
-        <div class="thumbnail" 
-            *ngFor="let record of records; let i = index"
-            [class.active]="i === imageIndex"
-            (click)="selectImage(i); stop($event)">
-            <img [src]="record.image" [alt]="'Thumbnail ' + (i + 1)">
-            <span class="thumbnail-number">{{ i + 1 }}</span>
-        </div>
+            <div class="thumbnail"
+                *ngFor="let record of records; let i = index"
+                [class.active]="i === imageIndex"
+                (click)="selectImage(i); stop($event)">
+                <img [src]="record.image" [alt]="'Thumbnail ' + (i + 1)">
+                <span class="thumbnail-number">{{ i + 1 }}</span>
+            </div>
         </div>
     </div>
 </div>

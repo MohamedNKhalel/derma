@@ -150,6 +150,7 @@ export class HomeComponent implements OnInit {
   }
 
   saveScan(): void {
+    if (!this.prediction) return; // make sure prediction exists
     this.uploaded = true;
     this.currentSelectedFile = new RecordFile(this.selectedFiles[0]);
     const timestamp = new Date().getTime();
@@ -166,10 +167,14 @@ export class HomeComponent implements OnInit {
           this.currentSelectedFile.prediction = this.prediction;
           this.currentSelectedFile.treatment = this.treatment;
 
+          // Save metadata
           this._RecordsService.saveFileMetaData(
             this.currentSelectedFile,
             this.sendImageForm.get('id')?.value
           );
+
+          // Load disease details after saving
+          this.fetchDiseaseData(this.prediction);
         });
       })
     ).subscribe({
@@ -208,35 +213,33 @@ export class HomeComponent implements OnInit {
 
     this.loadingFlag = true;
     this.currentStep = 1;
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('fileup', this.selectedFiles[0]);
 
-    this._DiseaseService.diseaseApi(formData).subscribe({
+    this._DiseaseService.diseasesApi(formData).subscribe({
       next: data => {
-        this.prediction = data.prediction;
+        // Use predicted_class from response
+        this.prediction = data.predicted_class || 'Diagnosis Not Available';
         this._DataService.diseaseName.next(this.prediction);
+
+        // Fetch details immediately
         this.fetchDiseaseData(this.prediction);
         this.getDetails(this.prediction);
+
         this.loadingFlag = false;
         this.currentStep = 2;
 
         // Update patient disease property
         this._DataService.updateDiseaseProperty()
           .doc(this.sendImageForm.get('id')?.value)
-          .update({
-            disease: this.prediction
-          })
-          .then(() => {
-            console.log('Disease property updated successfully');
-          })
-          .catch(error => {
-            console.error('Error updating disease property:', error);
-          });
+          .update({ disease: this.prediction })
+          .then(() => console.log('Disease property updated successfully'))
+          .catch(error => console.error('Error updating disease property:', error));
       },
       error: err => {
         console.error('Error analyzing image:', err);
-        this.loadingFlag = false;
         this.prediction = 'Diagnosis Not Available';
+        this.loadingFlag = false;
         this.currentStep = 2;
       }
     });
@@ -251,15 +254,20 @@ export class HomeComponent implements OnInit {
   }
 
   fetchDiseaseData(diseaseName: string): void {
-    this._DiseaseService.getDiseaseData(diseaseName).subscribe((data) => {
-      if (data) {
-        this.skinDiseasePhotoUrl = data.image_url;
-        this.diseaseName = data.disease_name;
-        this.description = data.description;
-        this.symptoms = (data.symptoms as string).split(',').map((s) => s.trim());
-        this.treatment = data.treatment;
+    this.isLoading = true;
+    this._DiseaseService.getDiseaseData(diseaseName).subscribe({
+      next: data => {
+        if (data) {
+          this.skinDiseasePhotoUrl = data.image_url;
+          this.diseaseName = data.disease_name;
+          this.description = data.description;
+          this.symptoms = (data.symptoms as string).split(',').map(s => s.trim());
+          this.treatment = data.treatment;
+        }
         this.isLoading = false;
-      } else {
+      },
+      error: err => {
+        console.error('Error fetching disease details:', err);
         this.isLoading = false;
       }
     });

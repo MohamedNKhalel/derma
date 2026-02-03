@@ -1,80 +1,150 @@
+<section class="auth-page">
 
-<section class=" main">
-    <div class="container shadow rounded-5">
-        <div class="row align-items-center rounded-5 bg-body-secondary">
-            <div class="col-md-7  p-5 bg-white">
-                <div>
-                    <div class="d-flex justify-content-between align-items-center"><span [ngStyle]="{'cursor': 'pointer'}" class="fs-6 bg-primary p-2 rounded-3 text-white" (click)="_Router.navigate(['/landing'])"><i class="fa fa-1 fa-arrow-left" ></i></span> <h2 class="text-uppercase m-0 title fw-bolder">Log into your account</h2></div>
-                    <form [formGroup]="loginForm"  class="example-form mt-5">
-                        <mat-form-field class="example-full-width mb-2" appearance="outline">
-                            <mat-label>Email</mat-label>
-                            <input #emailInput formControlName="email" type="email" matInput placeholder="Enter Your email">
-                            <mat-error *ngIf="loginForm.get('email')?.errors?.['email']">
-                                Please enter a valid email address
-                            </mat-error>
-                            <mat-error *ngIf="loginForm.get('email')?.errors?.['required']">
-                                Email is <strong>required</strong>
-                            </mat-error>
-                        </mat-form-field>
-                        
-                        <mat-form-field class="example-full-width position-relative" appearance="outline">
-                            <mat-label>Password</mat-label>
-                            <input #password formControlName="password" [type]="eyeFlag?'text': 'password' " matInput placeholder="Enter you password">
-        
-                            <i *ngIf="!eyeFlag&&password.value.length>0" (click)="toggleEye()" class="position-absolute top-50 translate-middle-y password-eye fa fa-eye"></i>
-                            <i *ngIf="eyeFlag&&password.value.length>0" (click)="toggleEye()" class="position-absolute top-50 translate-middle-y password-eye fa fa-eye-slash"></i>
-        
-                            <mat-error *ngIf="loginForm.get('password')?.errors?.['required']">
-                                Password is <strong>required</strong>
-                            </mat-error>
-                        </mat-form-field>
-                        <p *ngIf="errMsg" class="alert alert-danger fs-6">{{errMsg}}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a (click)="forgetFormFlag=true" [ngStyle]="{'cursor': 'pointer'}"  class="text-decoration-none d-block cursor-pointer">forget password ?</a>
-                            <a routerLink="/register" class="text-decoration-none d-block">Register now</a>
-                        </div>
-                        <div>
-                            <button [disabled]="loginForm.invalid" type="button" (click)="login()" class="btn-main w-100 mt-4"><span *ngIf="!loadingFlag">Log in</span><i *ngIf="loadingFlag" class="fa fa-spinner fa-spin"></i></button>
-                        </div>
-                    </form> 
-                    <p class="line text-center mt-4">Or</p>
-                    <div class="d-flex flex-column gap-2 social">
-                            <button (click)="loginWithGoogle()" class="text-capitalize fs-6"> Sign in with google <img class="google-icon" src="assets/images/google.svg" alt="google"></button>
-                    </div>
-                    <p class="mt-3 text-center">don't you have an account? <a class="text-decoration-none" routerLink="/register" >Sign up</a></p>
-                </div>
-            </div>
-            <div class="col-md-4 offset-1">
-                <div>
-                    <img class="w-100" src="assets/images/icons/undraw_sign_up_n6im.svg" alt="">
-                </div>
-            </div>
-        </div>
+  <!-- Left Panel — ambient visual -->
+  <div class="auth-visual">
+    <div class="glow glow--1"></div>
+    <div class="glow glow--2"></div>
+    <div class="glow glow--3"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="visual-content">
+      <div class="logo-mark">
+        <!-- <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <rect width="44" height="44" rx="12" fill="url(#logoGrad)"/>
+          <path d="M22 10v24M10 22h24" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+          <defs><linearGradient id="logoGrad" x1="0" y1="0" x2="44" y2="44"><stop stop-color="#00d4aa"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+        </svg> -->
+        <span class="logo-text">DERMAI</span>
+      </div>
+
+      <div class="visual-body">
+        <h1 class="visual-title">Diagnose.<br><span class="accent">Protect.</span><br>Repeat.</h1>
+        <p class="visual-desc">AI-powered skin disease detection trusted by clinicians worldwide.</p>
+      </div>
+
+      <div class="trust-badges">
+        <div class="badge"><span class="badge-num">98%</span><span class="badge-label">Accuracy</span></div>
+        <div class="badge-divider"></div>
+        <div class="badge"><span class="badge-num">2.4s</span><span class="badge-label">Avg. Scan</span></div>
+        <div class="badge-divider"></div>
+        <div class="badge"><span class="badge-num">ISO</span><span class="badge-label">Certified</span></div>
+      </div>
     </div>
+  </div>
+
+  <!-- Right Panel — form card -->
+  <div class="auth-form-panel">
     
-    <div (click)="forgetFormFlag=false" *ngIf="forgetFormFlag" class="position-fixed all-forms top-0 bottom-0 end-0 start-0 d-flex justify-content-center align-items-center z-3">
-        <div class="main-forms">
-            <div class="forget-form p-5 bg-white rounded-2" (click)="stop($event)">
-                <div class="d-flex mb-2 justify-content-between align-items-center">
-                    <h2 class="h1">Forget password form</h2>
-                    <i (click)="forgetFormFlag=false" style="cursor: pointer;" class="fa fa-x fa-xl"></i>
-                </div>
-                <div>
-                    <form [formGroup]="forgetForm">
-                        <mat-form-field class="example-full-width mb-2" appearance="outline">
-                            <mat-label>Email</mat-label>
-                            <input #emailInput formControlName="email" type="email" matInput placeholder="Enter Your email">
-                            <mat-error *ngIf="forgetForm.get('email')?.errors?.['email']">
-                                Please enter a valid email address
-                            </mat-error>
-                            <mat-error *ngIf="forgetForm.get('email')?.errors?.['required']">
-                                Email is <strong>required</strong>
-                            </mat-error>
-                        </mat-form-field>
-                        <button [disabled]="forgetForm.invalid" type="button" (click)="forgetPassword()" class="btn btn-outline-primary d-block ms-auto">Send</button>
-                    </form>
-                </div>
-            </div>
+    <div class="auth-card">
+
+      <!-- Mobile logo (visible only on small screens) -->
+      <div class="mobile-logo">
+        <svg width="36" height="36" viewBox="0 0 44 44" fill="none">
+          <rect width="44" height="44" rx="12" fill="url(#logoGrad2)"/>
+          <path d="M22 10v24M10 22h24" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+          <defs><linearGradient id="logoGrad2" x1="0" y1="0" x2="44" y2="44"><stop stop-color="#00d4aa"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+        </svg>
+        <span>DERMAI</span>
+      </div>
+
+      <div class="card-header">
+        <a routerLink="/landing" class="return-home">
+        ← Return to Home
+    </a>
+        <h2 class="card-title">Welcome back</h2>
+        <p class="card-sub">Sign in to continue to your dashboard</p>
+      </div>
+
+      <form [formGroup]="loginForm" class="auth-form">
+
+        <!-- Email -->
+        <div class="field-wrap" [class.focused]="emailRef.value.length > 0 ">
+          <label class="field-label">Email</label>
+          <div class="input-shell">
+            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <input #emailRef formControlName="email" type="email" class="auth-input" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <span class="field-error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['email']">Please enter a valid email address</span>
+          <span class="field-error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']">Email is required</span>
         </div>
+
+        <!-- Password -->
+        <div class="field-wrap" [class.focused]="passwordRef.value.length > 0">
+          <label class="field-label">Password</label>
+          <div class="input-shell">
+            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input #passwordRef formControlName="password" [type]="eyeFlag ? 'text' : 'password'" class="auth-input" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="eye-btn" (click)="toggleEye()" *ngIf="passwordRef.value.length > 0">
+              <svg *ngIf="!eyeFlag" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg *ngIf="eyeFlag"  width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+          <span class="field-error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']">Password is required</span>
+        </div>
+
+        <!-- API error -->
+        <div class="api-error" *ngIf="errMsg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          {{ errMsg }}
+        </div>
+
+        <!-- Forgot + Register row -->
+        <div class="form-links">
+          <a class="link" (click)="forgetFormFlag = true" style="cursor:pointer">Forgot password?</a>
+          <a class="link" routerLink="/register">Create account</a>
+        </div>
+
+        <!-- Login button -->
+        <button type="button" class="btn-primary" [disabled]="loginForm.invalid || loadingFlag" (click)="login()">
+          <span class="btn-inner" *ngIf="!loadingFlag">Sign In</span>
+          <span class="btn-spinner" *ngIf="loadingFlag">
+            <span class="spinner"></span>
+          </span>
+        </button>
+
+        <!-- Divider -->
+        <div class="divider"><span>or continue with</span></div>
+
+        <!-- Google -->
+        <button type="button" class="btn-google" (click)="loginWithGoogle()">
+          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Sign in with Google
+        </button>
+
+      </form>
     </div>
+  </div>
+
+  <!-- ─── Forgot-Password Modal ─── -->
+  <div class="modal-backdrop" *ngIf="forgetFormFlag" (click)="forgetFormFlag = false">
+    <div class="modal-card" (click)="stop($event)">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <h3>Reset Password</h3>
+        </div>
+        <button type="button" class="modal-close" (click)="forgetFormFlag = false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <p class="modal-desc">Enter your registered email. We'll send you a link to create a new password.</p>
+
+      <form [formGroup]="forgetForm" class="modal-form">
+        <div class="field-wrap">
+          <label class="field-label">Email</label>
+          <div class="input-shell">
+            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <input formControlName="email" type="email" class="auth-input" placeholder="you@example.com">
+          </div>
+          <span class="field-error" *ngIf="forgetForm.get('email')?.touched && forgetForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+          <span class="field-error" *ngIf="forgetForm.get('email')?.touched && forgetForm.get('email')?.errors?.['required']">Email is required</span>
+        </div>
+
+        <button type="button" class="btn-primary" [disabled]="forgetForm.invalid" (click)="forgetPassword()">
+          <span>Send Reset Link</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
 </section>
